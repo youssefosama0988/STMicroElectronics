@@ -1,17 +1,19 @@
 #include "commands.h"
 
-char input[100];
+char input[512];
 int status =0;
 char *token[6];
 int token_counter=0;
 const char *shellmsg = "enter your command :) $ ";
 ssize_t inputsize =0;
 
+/*===================================================================================================================================================================*/
 
 void myexit(void){
 	write(STDOUT , " Goodbye! :)\n" , strlen(" Goodbye! :)\n") );
 }
 
+/*===================================================================================================================================================================*/
 
 int pwd(void){
 
@@ -26,6 +28,7 @@ int pwd(void){
 	}	
 }
 
+/*===================================================================================================================================================================*/
 
 int  echo(void){
 	token_counter = 1;
@@ -39,12 +42,11 @@ int  echo(void){
 			token_counter++;
 		}
 		printf("\n");
-		memset(input , '\0' , 100);
 		return 0;
 	}
 }
 
-
+/*===================================================================================================================================================================*/
 
 void help(void){
 	write(STDOUT , " Supported Commands \n" , strlen(" Supported Commands \n"));
@@ -57,6 +59,8 @@ void help(void){
 
 }
 
+/*===================================================================================================================================================================*/
+
 char targetPath[100] , sourcePath[100];   /* GLOBAL to use in MOVE function*/
 int cp(void){
 	
@@ -65,7 +69,6 @@ int cp(void){
 	int size = 0;
 	char *fileName_target , *fileName_source;
 	char *temp;
-	
 	
 	strcpy( targetPath , token[2]);
 	strcpy( sourcePath , token[1]);
@@ -96,7 +99,24 @@ int cp(void){
 	
 	/* when the source file opened successfully*/
 	else {
-		fd_target = open(targetPath , O_CREAT | O_WRONLY | O_TRUNC | O_EXCL , S_IRWXU);
+		
+		/* Check if there is an option or not. ex: -a option */
+		
+		if(token[3] != NULL){
+			if(strcmp(token[3],"-a") == 0)          /* token[3] = option "-a" append the file */
+				fd_target = open(targetPath , O_CREAT | O_WRONLY | O_APPEND , S_IRWXU);
+			else if(strcmp(token[3],"-f") == 0)      /* token[3] = option "-f" over write the file */
+				fd_target = open(targetPath , O_CREAT | O_WRONLY | O_TRUNC| O_APPEND , S_IRWXU);	
+			else{ 
+				printf("%s : not supported option\n" , token[3]);
+				//fd_target = -1;
+			}
+				
+		}		
+		else{ 	
+			fd_target = open(targetPath , O_CREAT | O_WRONLY | O_TRUNC | O_EXCL , S_IRWXU);
+		}
+		
 		if(fd_target == -1){
 			perror("Failed! ");
 			return -1;
@@ -122,13 +142,14 @@ int cp(void){
 	
 }
 
+/*===================================================================================================================================================================*/
 
 int move(void){
 	int done = 0;
 	/* Call cp Function to copy the content of the file to target*/
 	done = cp();
 	if(-1 == done){
-		write(STDOUT , " Failed to copy" , strlen(" Failed to copy") );
+		write(STDOUT , " Failed to copy \n" , strlen(" Failed to copy \n") );
 		return  -1;
 	}
 	

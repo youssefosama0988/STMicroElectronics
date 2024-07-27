@@ -8,7 +8,7 @@ int main(){
 		
                 /* read the command after writing the sell message*/
                 write( STDOUT , shellmsg , strlen(shellmsg));
-                inputsize = read(STDIN , input , 100);
+                inputsize = read(STDIN , input , 512);
                 
                 if( input[0] == '\n' )         //check if enter is pressed so skip & keep asking for command
                 	continue;
@@ -58,9 +58,10 @@ int main(){
 			write(STDOUT , " Command Not Found, Please Check 'help' Command\n" , strlen(" Command Not Found, Please Check 'help' Command\n") );
 		}
 		
+		memset(input , '\0' , 512);
 		
 		
-
+		
 	}
 
 	return 0 ;

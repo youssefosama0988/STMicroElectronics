@@ -16,7 +16,7 @@
 #define STDERR     2
  
 /*-----------Variables Declarations-------------*/
-extern	char input[100];
+extern	char input[512];
 extern	int status ;
 extern  char *token[6];
 extern  int token_counter;
