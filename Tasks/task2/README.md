@@ -53,7 +53,7 @@
 
 6- **help**: print all the supported command with a brief info about each one.
       
-Also, Support pressing Enter to be similar to pressing Enter on Bash shell.
+**Also, Support pressing Enter to be similar to pressing Enter on Bash shell.**
 
 ### My Shell Output :
 ====================
