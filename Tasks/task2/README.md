@@ -56,7 +56,7 @@
 Also, Support pressing Enter to be similar to pressing Enter on Bash shell.
 
 ### My Shell Output :
-=====================
+====================
 
 <img src ="https://github.com/user-attachments/assets/6044e646-9834-4542-af7b-3552a53780ea">
 
