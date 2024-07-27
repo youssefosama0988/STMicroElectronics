@@ -1,11 +1,10 @@
 #include "commands.h"
 
-char input[512];
-int status =0;
+
+
 char *token[6];
 int token_counter=0;
-const char *shellmsg = "enter your command :) $ ";
-ssize_t inputsize =0;
+
 
 /*===================================================================================================================================================================*/
 

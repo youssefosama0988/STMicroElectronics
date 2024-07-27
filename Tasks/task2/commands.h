@@ -16,12 +16,10 @@
 #define STDERR     2
  
 /*-----------Variables Declarations-------------*/
-extern	char input[512];
-extern	int status ;
+
 extern  char *token[6];
 extern  int token_counter;
-extern  const char *shellmsg;
-extern  ssize_t inputsize;
+
 
 /* ----------Functions Declarations------------*/
 void  myexit(void);

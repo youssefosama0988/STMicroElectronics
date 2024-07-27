@@ -2,6 +2,10 @@
 
 
 int main(){
+	int status =0;
+	const char *shellmsg = "enter your command :) $ ";
+	ssize_t inputsize =0;
+	char input[512];
 	
 	while(1){
 		token_counter = 0;
