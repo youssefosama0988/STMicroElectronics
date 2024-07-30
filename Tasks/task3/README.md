@@ -3,7 +3,7 @@
   ### Compilation Commands :
   ==========================
 ```
-
+    git clone  
     gcc myshell.c commands.c -o shell
     ./shell
     
@@ -12,8 +12,8 @@
 ## Supported Commands : 
 ==========================
 
-### Built In Commands : 
-========================
+### *Built In Commands* :
+
 
 1- **pwd**: print working directory.
 
@@ -75,10 +75,9 @@
       
 **Also, Support pressing Enter to be similar to pressing Enter on Bash shell.**
 
-### External commands:
-======================
+### *External commands:*
 
-***Any command in the PATH environment variable (ps,ls,vim....etc)**
+**Any command in the PATH environment variable (ps,ls,vim....etc)**
  
  Support executing the programs using their names directly without the need to enter the full patch
 
@@ -86,6 +85,9 @@
 ====================
 
 <img src ="https://github.com/user-attachments/assets/6044e646-9834-4542-af7b-3552a53780ea">
+
+<img src ="https://github.com/user-attachments/assets/d45e3f13-96c8-48ba-b6d2-5519e64b0540">
+
 
 
 
