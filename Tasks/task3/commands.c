@@ -55,7 +55,9 @@ void myhelp(void){
 	write(STDOUT , "   4) mymv: move a file to another place (mv sourcePath targetPath)\n" , strlen("   4) mymv: move a file to another place (mv sourcePath targetPath)\n"));
 	write(STDOUT , "   5) myexit: print 'Goodbye!' and terminate the shell\n" , strlen("   5) myexit: print 'Goodbye!' and terminate the shell\n"));
 	write(STDOUT , "   6) myhelp: print all the supported commands \n" , strlen("   6) myhelp: print all the supported commands \n"));				
-
+	write(STDOUT , "   7) cd path : change the current directory \n" , strlen("   6) cd path : change the current directory \n"));				
+	write(STDOUT , "   8) type command : return the type of the command 'internal, external or unsupported command' \n" , strlen("   8) type command : return the type of the command 'internal, external or unsupported command' \n"));				
+	write(STDOUT , "   9) envir command without any args : print all the environment variables  \n" , strlen("   9) envir command without any args : print all the environment variables  \n"));						
 }
 
 /*===================================================================================================================================================================*/
