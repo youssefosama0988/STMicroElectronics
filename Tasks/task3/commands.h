@@ -41,6 +41,8 @@ int mymove(void);
 
 int mycd(void);
 
+void envir(void);
+
 int externalCommands(void);
 
 #endif

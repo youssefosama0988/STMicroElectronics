@@ -63,6 +63,11 @@ int main(){
 			status = mycd();	
 		}
 		
+		/* check if the user enter the envir command */
+		else if(!strcmp(token[0] , "envir")){
+			envir();	
+		}
+		
 		/* in case of Unsupported Command */
 		else{
 			externalCommands();
