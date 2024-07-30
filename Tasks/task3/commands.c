@@ -9,15 +9,15 @@ int token_counter=0;
 /*===================================================================================================================================================================*/
 
 void myexit(void){
-	write(STDOUT , " Goodbye! :)\n" , strlen(" Goodbye! :)\n") );
+	write(STDOUT , " Goodbye! :) \n" , strlen(" Goodbye! :) \n") );
 }
 
 /*===================================================================================================================================================================*/
 
 int pwd(void){
 
-	char cwd[256];
-	if( getcwd( cwd , sizeof(cwd) ) != NULL){
+	char cwd[PATH_LENGTH];
+	if( getcwd( cwd , PATH_LENGTH ) != NULL){
 		printf("Current Working Directory : %s \n" , cwd);
 		return 0 ;
 	}	
@@ -87,7 +87,7 @@ int mycp(void){
 		strcat(targetPath , fileName_target );
 	}
 
-	/*------------------------------------------------ Start Opening the files ----------------------------------------------------*/
+	/*------------------------------ Start Opening the files -------------------------------------*/
 	
 	fd_source = open( sourcePath , O_RDONLY);
 	
@@ -165,19 +165,18 @@ int mymove(void){
 /*======================================================================================================================================================================*/
 
 int mycd(void){
-	char *cwd_prev;
-	char *cwd_new ;
-	char *temp;
+
+	char cwd_prev[PATH_LENGTH];
+	char cwd_new[PATH_LENGTH];
+	char temp[PATH_LENGTH];
 	int counter;
+	
 	if( NULL != token[1] ){
 		
 		
 		strcpy( temp , token[1] );
-		cwd_prev = getcwd(cwd_prev , PATH_LENGTH);
-		
-		
-		
-		
+		getcwd(cwd_prev , PATH_LENGTH);
+			
 		/* if the user enter '..' or '../' go to the parent dir.*/
 		if( strcmp(token[1] , "..") == 0 || strcmp(token[1] , "../") == 0 ){
 			counter = strlen(cwd_prev) - 1 ;
@@ -185,43 +184,44 @@ int mycd(void){
 				counter--;
 			}
 			cwd_prev[counter] = '\0';
-			cwd_new = cwd_prev;     
+			strcpy(cwd_new , cwd_prev);     
 		}
 		
 		/* if the user enter '/' go to this absolute dir. if exist*/
 		else if( token[1][0] == '/' ){
-			cwd_new = token[1];	
+			strcpy(cwd_new ,token[1]);	
 		}
 		
 		/* if the user enter './fileName' or '../fileName' */
 		else{
 			/* check if the user enter '..' in the first token */
-			if(strcmp( strtok(temp , "/") ,".." ) == 0){
+			if(strcmp( strtok(temp , "/\n") ,".." ) == 0){
 				counter = strlen(cwd_prev) - 1 ;
 				while( cwd_prev[counter] != '/' ){
 					counter--;
 				}
 				cwd_prev[counter] = '\0';
-				cwd_new = strcat( cwd_prev , &(token[1][2]) );    //token[1][2] = points to the slash in "../fileName" 			
+				strcpy(cwd_new , strcat( cwd_prev , &(token[1][2]) ) );    //token[1][2] = points to the slash in "../fileName" 			
 			}
 			
 			else{ 
-				cwd_prev = strcat( cwd_prev, "/");
-				cwd_new =  strcat( cwd_prev, token[1] );
+				strcat( cwd_prev, "/");
+				strcpy(cwd_new , strcat( cwd_prev, token[1] ) );
 			}
 		}
-	
+		
+		/* use system call chdir to change the current directory with cwd_new */
 		if( chdir(cwd_new) == -1){
-		printf("%s \n" , cwd_new );
-		perror("cd Failed ");
-		return -1;
+			printf("%s \n" , cwd_new );
+			perror("cd Failed ");
+			return -1;
 		}
 	}
-	else
+	else{
 		printf("No Arg. \n");
-		return -1;	
+		return -1;
+	}		
 		
-
 	return 0;
 }
 
@@ -237,30 +237,72 @@ void envir(void){
 
 /*======================================================================================================================================================================*/
 
+int type(void){
+	char *InternalCommands[]={"echo" , "pwd" , "mycp" , "mymv" , "myexit" , "myhelp" , "cd" , "envir" , "type" };
+	int counter;
+	char fullPath[PATH_LENGTH];
+	char *path;          
+	char temp[PATH_LENGTH];
+	char *directory;
+	
+	if(NULL == token[1]){
+		printf("No Arg.\n");
+		return -1;
+	}
+	/* Case of Internal Commands */
+	for(counter = 0 ; counter < BUILTINCOMMANDS ; counter++){
+		if( strcmp(token[1] , InternalCommands[counter]) == 0 ){
+			printf("%s is a Built In Command \n",token[1]);
+			return 0;
+		}
+	}
+	
+	/* Search for External Commands*/
+	path = strdup( getenv("PATH") );
+	if(NULL == path)
+		return -1;
+	
+	directory = strtok(path ,":");
+	while(NULL != directory){
+		strcpy(temp , directory);
+		strcat(temp,"/");
+		strcpy( fullPath , strcat(temp,token[1]) );
+		if(access(fullPath , X_OK) == 0){
+			printf("%s is External Command\n",token[1]);
+			return 0;
+		}
+		directory = strtok(NULL,":");		
+	}
+	
+	printf("%s is Unsupported Command\n",token[1]);					
+	return 0;
+}
+
+/*======================================================================================================================================================================*/
+
 int externalCommands(void){
 	int pid;
 	int exec_ret;
 	int child_status;
-	
+
 	pid = fork();
 	
 	if(pid > 0){
-		
 		pid = wait(&child_status);
 		/* handle exit status of the Child */
-		
-		
 	}
+	
 	/* the child going to execute the command and terminates, if fails to find the program, exit with -1 */
 	else if(pid == 0){
-	
+
+		printf("%s\n" , token[0] );
 		exec_ret = execvp(token[0] , token);
 		if(exec_ret == -1){
 			perror("Unsupported Command ");
 			exit(-1);
 		}	
-	
 	}
+	
 	else {
 		perror("Fork Failed ");
 		return -1;
@@ -269,10 +311,7 @@ int externalCommands(void){
 
 }
 
-
-
-
-
+/*======================================================================================================================================================================*/
 
 
 

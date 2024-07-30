@@ -18,6 +18,7 @@
 #define STDOUT     1
 #define STDERR     2
 #define PATH_LENGTH     256
+#define BUILTINCOMMANDS  9
  
 /*-----------Variables Declarations-------------*/
 
@@ -42,6 +43,8 @@ int mymove(void);
 int mycd(void);
 
 void envir(void);
+
+int type(void);
 
 int externalCommands(void);
 

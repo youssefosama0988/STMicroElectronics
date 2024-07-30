@@ -11,6 +11,7 @@ int main(){
 		token_counter = 0;
 		
                 /* read the command after writing the sell message*/
+                memset(input , '\0' , 512);
                 write( STDOUT , shellmsg , strlen(shellmsg));
                 inputsize = read(STDIN , input , 512);
                 
@@ -68,16 +69,20 @@ int main(){
 			envir();	
 		}
 		
-		/* in case of Unsupported Command */
-		else{
-			externalCommands();
+		/* check if the user enter the type command */
+		else if(!strcmp(token[0] , "type")){
+			type();	
 		}
 		
-		memset(input , '\0' , 512);
-		
-		
-		
+		/* in case of Unsupported Command */
+		else{	
+			externalCommands();
+			
+		}
 	}
 
 	return 0 ;
 }
+
+
+
