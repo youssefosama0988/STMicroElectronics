@@ -231,9 +231,29 @@ int mycd(void){
 
 void envir(void){
 	int counter = 0;
-	while(environ[counter] != NULL){
-		printf("%s \n" , environ[counter]);
-		counter++;
+	char *variable;
+	//char variable[64];
+	/* if there is no Argument */
+	if(NULL == token[1]){
+		while(environ[counter] != NULL){
+			printf("%s \n" , environ[counter]);
+			counter++;
+		}
+	}
+	/* if there is an argument so it print the value of the environment variable */
+	else{	
+		if( NULL != getenv(token[1])){                    //exist
+			variable = strdup( getenv(token[1]) );
+			
+			if(NULL == variable)
+				printf("malloc failed\n");
+			else{	
+			printf("%s\n",variable);
+			}		
+		}
+		
+		else
+			printf("%s Not Found\n",token[1]);	
 	}
 }
 
