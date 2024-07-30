@@ -1,4 +1,4 @@
-  ## My Shell
+  # My Shell
 
   ### Compilation Commands :
   ==========================
@@ -9,12 +9,26 @@
     
 ```
   
-### Supported Commands :
+## Supported Commands : 
+==========================
+
+### Built In Commands : 
 ========================
 
 1- **pwd**: print working directory.
 
 2- **echo**: print a user input string on stdout 
+ 
+ ex:
+
+
+```
+
+    echo Hello!
+    Output : Hello!
+    
+```
+  
 
 3- **cp**: copy a file to another file
 
@@ -49,13 +63,26 @@
     
 ```
         
-5- **exit** : print "good bye" and terminate the shell
+5- **myexit** : print "good bye" and terminate the shell
 
-6- **help**: print all the supported command with a brief info about each one.
+6- **myhelp**: print all the supported command with a brief info about each one.
+
+7- **cd** path : change the current directory
+
+8- **type** command: return the type of the command (built in, external or unsupported command)
+
+9- **envir** : print all the environment variables.
       
 **Also, Support pressing Enter to be similar to pressing Enter on Bash shell.**
 
-### My Shell Output :
+### External commands:
+======================
+
+***Any command in the PATH environment variable (ps,ls,vim....etc)**
+ 
+ Support executing the programs using their names directly without the need to enter the full patch
+
+## My Shell Output :
 ====================
 
 <img src ="https://github.com/user-attachments/assets/6044e646-9834-4542-af7b-3552a53780ea">
