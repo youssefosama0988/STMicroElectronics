@@ -3,7 +3,8 @@
   ### Compilation Commands :
   ==========================
 ```
-    git clone  
+    git clone RepoURL
+  
     gcc myshell.c commands.c -o shell
     ./shell
     
@@ -30,7 +31,7 @@
 ```
   
 
-3- **cp**: copy a file to another file
+3- **mycp**: copy a file to another file
 
    - Print error if the target file exists
 
@@ -42,11 +43,11 @@
 
 ```
 
-    cp sourcePath targetPath -a
+    mycp sourcePath targetPath -a
     
 ```
 
-4- **mv**: move a file to another place (mv sourcePath targetPath)
+4- **mymv**: move a file to another place (mv sourcePath targetPath)
 
         
   - Print error if the target file exist
@@ -59,7 +60,7 @@
 
 ```
 
-     mv sourcePath targetPath -f
+     mymv sourcePath targetPath -f
     
 ```
         
