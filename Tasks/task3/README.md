@@ -90,6 +90,9 @@
 <img src ="https://github.com/user-attachments/assets/d45e3f13-96c8-48ba-b6d2-5519e64b0540">
 
 
+***envir Command with an argument :***
+
+![envirTest](https://github.com/user-attachments/assets/5c6e93cc-dd64-4c77-8384-cdfdf2d9d861)
 
 
 
