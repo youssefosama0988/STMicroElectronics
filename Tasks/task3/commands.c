@@ -255,6 +255,7 @@ void envir(void){
 		else
 			printf("%s Not Found\n",token[1]);	
 	}
+	free(variable);
 }
 
 /*======================================================================================================================================================================*/
@@ -291,12 +292,14 @@ int type(void){
 		strcpy( fullPath , strcat(temp,token[1]) );
 		if(access(fullPath , X_OK) == 0){
 			printf("%s is External Command\n",token[1]);
+			free(path);
 			return 0;
 		}
 		directory = strtok(NULL,":");		
 	}
 	
-	printf("%s is Unsupported Command\n",token[1]);					
+	printf("%s is Unsupported Command\n",token[1]);		
+	free(path);			
 	return 0;
 }
 

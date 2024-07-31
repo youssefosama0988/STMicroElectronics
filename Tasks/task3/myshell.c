@@ -3,7 +3,7 @@
 
 int main(){
 	int status =0;
-	const char *shellmsg = "enter your command :) $ ";
+	const char *shellmsg = "\033[1;33menter your command :) $\033[0m ";
 	ssize_t inputsize =0;
 	char input[512];
 	
