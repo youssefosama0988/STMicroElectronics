@@ -1,5 +1,12 @@
   # My Shell
 
+  simple shell support built in commands (myhelp , echo , pwd , mycp , mymv , myexit , type , cd , envir)
+
+  Also,Any command in the PATH environment variable (ps,ls,man,cat,less ....etc)
+
+  you can see the **output** below:
+     
+
   ### Compilation Commands :
   ==========================
 ```
@@ -78,21 +85,16 @@
 
 ### *External commands:*
 
-**Any command in the PATH environment variable (ps,ls,vim....etc)**
+**Any command in the PATH environment variable (ps,ls,cat....etc)**
  
- Support executing the programs using their names directly without the need to enter the full patch
+   Support executing the programs using their names directly without the need to enter the full patch
 
 ## My Shell Output :
 ====================
 
-<img src ="https://github.com/user-attachments/assets/6044e646-9834-4542-af7b-3552a53780ea">
+![MyShellOutput(1)](https://github.com/user-attachments/assets/c010e08a-031f-4787-bbb7-c68cdab1eae9)
 
-<img src ="https://github.com/user-attachments/assets/d45e3f13-96c8-48ba-b6d2-5519e64b0540">
-
-
-***envir Command with an argument :***
-
-![envirTest](https://github.com/user-attachments/assets/5c6e93cc-dd64-4c77-8384-cdfdf2d9d861)
+![MyShellOutput(2)](https://github.com/user-attachments/assets/590fa775-6c8b-4d10-bb2a-688abd894440)
 
 
 
