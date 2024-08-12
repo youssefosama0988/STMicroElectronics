@@ -10,7 +10,7 @@ int main(){
 	int pipe_index;
 	
 	printf("pid = %d\n",getpid());
-	tty_fd = dup(STDOUT);         // save tty info
+	tty_fd = dup(STDOUT);          // save tty info
 	
 	
 	while(1){
@@ -39,37 +39,54 @@ int main(){
                 /* -------------handle pipe----------*/
                 if(pipe_index > 0){
                 	int pipeFd[2];
-                	int ret;
+                	int pid1 , pid2;
                 	int child_status;
                 	
-                	//handleRedirection(&token[i+1]);
                 	
                 	/*create the pipe */
-                	ret = pipe(pipeFd);
-                	if(ret == -1){
+                	
+                	if( pipe(pipeFd)  == -1){
 				perror("Pipe");                	
                 	}
                 	/* create fork to handle the two proccesses */
-                	ret = fork();
-                	if( -1 == ret){
-				perror("fork");                	
+                	pid1 = fork();
+                	if( -1 == pid1){
+				perror("fork1");                	
                 	}
-                	else if(0 == ret){   // Child
+                	else if(0 == pid1){   // Child 1 excute first command
                 		
                 		/* output redirection to the pipeF[1]*/
                 		redirection(pipeFd[1] , STDOUT);
+                		//close(pipeFd[0]);
                 		execute(token);
                 		exit(0);
                 	
                 	}
                 	else{	            // Parent
+                		pid2 = fork();
                 		
-                		/* read redirection to the pipeF[0]*/
-                		redirection(pipeFd[0] , STDIN);
-                		/*waiting*/
-                		wait(&child_status);
-                		execute(&token[pipe_index + 1]);  //execute the second command which is after | sign
+                		if( -1 == pid2){
+				perror("fork2");                	
+		        	}
+		        	else if(0 == pid2){   // Child 2 excute second command
+		        		
+		        		/* read redirection to the pipeF[0]*/
+		        		handleRedirection( &token[pipe_index+1] );
+		        		redirection(pipeFd[0] , STDIN);
+		        		close(pipeFd[1]);
+		        		execute(&token[pipe_index + 1]);  //execute the second command which is after | sign
+		        		exit(0);
+		        	
+                		}
                 	}
+                	
+                	/* Close both ends of the pipe in the parent */
+                	close(pipeFd[0]); 
+			close(pipeFd[1]);
+
+			/** Wait for both children to finish **/
+			waitpid(pid1, NULL, 0);
+			waitpid(pid2, NULL, 0);
                 	
                 }
                 

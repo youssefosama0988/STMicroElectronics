@@ -55,7 +55,10 @@ void myhelp(void){
 	write(STDOUT , "   6) myhelp: print all the supported commands \n" , strlen("   6) myhelp: print all the supported commands \n"));				
 	write(STDOUT , "   7) cd path : change the current directory \n" , strlen("   6) cd path : change the current directory \n"));				
 	write(STDOUT , "   8) type command : return the type of the command 'internal, external or unsupported command' \n" , strlen("   8) type command : return the type of the command 'internal, external or unsupported command' \n"));				
-	write(STDOUT , "   9) envir command without any args : print all the environment variables  \n" , strlen("   9) envir command without any args : print all the environment variables  \n"));						
+	write(STDOUT , "   9) envir command without any args : print all the environment variables  \n" , strlen("   9) envir command without any args : print all the environment variables  \n"));
+	write(STDOUT , "   10) myuptime : Tell how long the system has been running.\n" , strlen("   10) myuptime : Tell how long the system has been running.\n"));
+	write(STDOUT , "   11) myfree : Display amount of free and used memory in the system\n" , strlen("   11) myfree : Display amount of free and used memory in the system\n"));
+							
 }
 
 /*===================================================================================================================================================================*/
@@ -428,9 +431,21 @@ int handleRedirection(char *token[]){
 				perror("open failed");
 				return -1;
 			}
+			if(NULL != token[i+2]){
+			
+				if(strcmp(token[i+2] ,"2>&1") == 0){           // Support error and output redirections to the same file at the same time 
+					redirection(fd , STDERR);
+				}
+			}
+			
+			
 			redirection(fd , STDOUT);	
-			token[i] =NULL;	
+			token[i] =NULL;
+				
+			
 		} 	
+		
+		
 		
 		/* check error redirection */		
 		else if(strcmp(token[i] ,"2>") == 0){
