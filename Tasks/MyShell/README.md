@@ -1,11 +1,43 @@
   # My Shell
 
-  simple shell support built in commands (myhelp , echo , pwd , mycp , mymv , myexit , type , cd , envir)
+  - simple shell support built in commands (help , echo , pwd , cp , mv , exit , type , cd , envir , uptime , free)
 
-  Also,Any command in the PATH environment variable (ps,ls,man,cat,less ....etc)
+  - Also,Any command in the PATH environment variable (ps,ls,man,cat,less ....etc)
 
-  you can see the **output** below:
-     
+  - Support I/O & Error Redirections.
+
+    ex:
+
+
+```
+
+    cat commands.h > output.txt
+    cat commands.hhhhhh 2> error.txt
+    cat commands.h > all.txt 2>&1       //output and error redirections
+  
+    
+```
+
+  - Support Pipe between two processes.
+
+    ex:
+
+
+```
+
+    cat commands.h | less
+    cat commands.h | less > output.txt
+  
+    
+```
+<br>
+<br>
+<br>
+
+  you can see the **output** below --->
+<br>
+<br>
+<br>     
 
   ### Compilation Commands :
   ==========================
@@ -80,14 +112,22 @@
 8- **type** command: return the type of the command (built in, external or unsupported command)
 
 9- **envir** : print all the environment variables.
+
+10- **myuptime** : Tell how long the system has been running.
+
+11- **myfree** : Display amount of free and used memory in the system.
       
 **Also, Support pressing Enter to be similar to pressing Enter on Bash shell.**
+<br> 
 
 ### *External commands:*
 
 **Any command in the PATH environment variable (ps,ls,cat....etc)**
  
-   Support executing the programs using their names directly without the need to enter the full patch
+  Support executing the programs using their names directly without the need to enter the full patch
+
+<br> 
+<br> 
 
 ## My Shell Output :
 ====================
@@ -96,7 +136,7 @@
 
 ![MyShellOutput(2)](https://github.com/user-attachments/assets/590fa775-6c8b-4d10-bb2a-688abd894440)
 
-
+![uptime free](https://github.com/user-attachments/assets/9378e007-5fd5-4bee-b6e6-1b73cab6f396)
 
 
 
