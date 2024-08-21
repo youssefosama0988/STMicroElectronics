@@ -65,7 +65,7 @@ void *HmmAlloc(size_t size){
 					return (void *)ret+OFFSET;
 				}		
 				else{
-					printf("\nEnd of heap\n");
+					//printf("\nEnd of heap\n");
 					return NULL;
 				}
 			}
@@ -94,7 +94,7 @@ void *HmmAlloc(size_t size){
 					return (void *)ret+OFFSET;
 				}		
 				else{
-					printf("\nEnd of heap\n");
+					//printf("\nEnd of heap\n");
 					return NULL;
 				}
 			}
@@ -119,6 +119,7 @@ void HmmFree(void *ptr){
 	int size = *(int *)ptr;
 	block_t *block_before;
 	block_t *block_after;
+	block_t *last_block;
 	bool merge_3blocks_condition;
 	bool merge_2blocks_condition;
 	
@@ -174,6 +175,13 @@ void HmmFree(void *ptr){
 		
 	
 	}
+	
+	last_block = GetLastBlock((block_t *)Heap);
+	if(last_block->length > PROGRAM_BRK_DEC + (2*STRUCT_SIZE)){
+		last_block->length -= PROGRAM_BRK_DEC;
+		program_brk -= PROGRAM_BRK_DEC;
+	}
+		
 }
 
 /*===============================================================================================================================================================*/

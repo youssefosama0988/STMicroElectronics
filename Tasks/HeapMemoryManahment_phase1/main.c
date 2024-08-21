@@ -1,6 +1,8 @@
 
 #include "HMM.h"
 
+//Test Program
+
 
 #define NUM_ALLOCS 10000
 #define MAX_SIZE 10240
@@ -39,6 +41,7 @@ void random_alloc_free_test() {
         }
     }
 }
+/*==========================================================================================================*/
 
 int main() {
     printf("Starting random allocation and deallocation test...\n");

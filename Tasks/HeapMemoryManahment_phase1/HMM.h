@@ -15,7 +15,8 @@
 #define PAGE                  (4*KBYTE)
 #define STRUCT_SIZE            24
 #define OFFSET                 4
-#define PROGRAM_BRK_INC      (128*KBYTE)
+#define PROGRAM_BRK_INC      (136*KBYTE)
+#define PROGRAM_BRK_DEC      (128*KBYTE)
 
 
 
