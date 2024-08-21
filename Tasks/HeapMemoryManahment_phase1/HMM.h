@@ -4,10 +4,7 @@
 
 #include "LinkedList.h"
 
-
-
-
-
+/*---------------Macros----------------------*/
 
 #define KBYTE                  1000
 #define MBYTE                 (KBYTE*KBYTE)
@@ -20,13 +17,14 @@
 
 
 
-
+/*-----------Variables Declarations-------------*/
 
 extern int Heap[SIZE_OF_HEAP];
 extern void *program_brk;
 
-
+/* ----------Functions Declarations------------*/
 void *HmmAlloc(size_t size);
+
 void HmmFree(void *ptr);
 
 #endif
