@@ -17,14 +17,17 @@ This project includes implementations of the **malloc** and **free** functions t
   ./hmm                                 // to run the program (main.c include the test).
 
 ```
-### Output of the test program
+### Output sample of the test program
+![Sample](https://github.com/user-attachments/assets/e6fa6533-9ce6-4c97-985d-f4256b7c1035)
+---------------
 
-### Flowcharts 
+### Flowcharts
+
+
 ![Free](https://github.com/user-attachments/assets/eb8b0c80-3bbb-4470-aa10-bcb0bf8cf0c4)
-
+---------------
 <br>
-------------------------------------------------------------------------------------------------------------------------------------------
 <br>
 
 ![Malloc](https://github.com/user-attachments/assets/b176e74d-1242-4675-ac29-b9b9f4574127)
-
+---------------
