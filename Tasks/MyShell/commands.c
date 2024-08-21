@@ -64,6 +64,7 @@ void myhelp(void){
 /*===================================================================================================================================================================*/
 
 char targetPath[100] , sourcePath[100];   /* GLOBAL to use in MOVE function*/
+
 int mycp(char *token[]){
 	
 	int fd_source , fd_target;
@@ -71,6 +72,14 @@ int mycp(char *token[]){
 	int size = 0;
 	char *fileName_target , *fileName_source;
 	char *temp;
+	if(NULL == token[1]){
+		printf("missing file operand\n");
+		return -1;
+	}
+	if(NULL == token[2]){
+		printf("missing destination file operand after '%s'\n",token[1]);
+		return -1;
+	}
 	
 	strcpy( targetPath , token[2]);
 	strcpy( sourcePath , token[1]);
