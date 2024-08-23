@@ -137,7 +137,6 @@ void *HmmAlloc(size_t size){
 /*==================================================================================================================================================================*/
 
 void HmmFree(void *ptr){
-	ptr -= OFFSET;
 	int size;
 	block_t *block_before;
 	block_t *block_after;
@@ -149,6 +148,7 @@ void HmmFree(void *ptr){
 		return;
 	}
 	
+	ptr -= OFFSET;
 	size = *(int *)ptr;
 	/* Search  for the block located before the allocated block */
 	block_before = SearchAddress((block_t *)Heap , (block_t *)ptr);
