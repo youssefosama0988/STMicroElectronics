@@ -27,12 +27,9 @@ void *HmmAlloc(size_t size){
 	block_t *head = (block_t *)( (void *)Heap + STRUCT_SIZE );
 	block_t *ret;
 	
-	if(!size)
-		size = 72;
-		
 	size = ((size + 7)/8)*8;			//size allignment
 	if(size<48){
-		size += STRUCT_SIZE;
+		size = 2*STRUCT_SIZE;
 	}	
 	
 	/* First Allocation */
@@ -43,26 +40,28 @@ void *HmmAlloc(size_t size){
 		((block_t *)Heap) -> next_free_block = NULL;
 		((block_t *)Heap) -> length = SIZE_OF_HEAP;
 		
-		InsertBlockAtEnd( (block_t *)Heap, head, PROGRAM_BRK_INC); //add Head node
-		ret = Split(head , size+OFFSET);			//split func. split the passed block and return pointer to the rest.
+		InsertBlockAtEnd( (block_t *)Heap, head, PROGRAM_BRK_INC-STRUCT_SIZE);	//add Head node
+		ret = Split(head , size+OFFSET);					//split func. split the passed block and return pointer to the rest.
 		*(int *)head = size+OFFSET;
 						
-		return (void *)head+OFFSET;				//save the size of the block and return pointer to the available block to use
+		return (void *)head+OFFSET;						//save the size of the block and return pointer to the available block to use
 	}
 	
 	ret = SearchSize( ((block_t *)Heap) -> next_free_block , size+OFFSET );		//return first block its length >= the required
 
 	/*there is free block to allocate */
 	if(NULL != ret){ 						
-		if(ret -> length <= size+OFFSET+(2*STRUCT_SIZE) ){		// if the length of the block = the length of required ----> delete the block from free list , else split it
+	
+		// if the length of the block = the length of required ----> delete the block from free list , else split it	
+		if( ret->length == size+OFFSET || ret -> length <= size+OFFSET+(2*STRUCT_SIZE) ){		
 			DeleteBlock(ret);
+			*(int *)ret = ret->length;
 			
 		}
 		else{
 			Split(ret , size+OFFSET);
+			*(int *)ret = size+OFFSET;
 		}
-		
-		*(int *)ret = size+OFFSET;
 		
 		return (void *)ret+OFFSET;
 	}
@@ -164,6 +163,19 @@ void HmmFree(void *ptr){
 		((block_t *)ptr) -> length = size;
 		
 	}
+	else if(block_before == (block_t *)Heap){
+	       block_after = block_before -> next_free_block;
+	       
+	       if( ((void *)block_after) == ptr+size ){
+		       
+		       InsertBlockAfter((block_t *)Heap, (block_t *)ptr , size + (block_after -> length));
+		       DeleteBlock(block_after);
+	       }
+	       else{
+		       InsertBlockAfter((block_t *)Heap,(block_t *)ptr,size);                  
+	       }
+       
+	}
 	
 	else{
 		block_after = block_before -> next_free_block;
@@ -202,12 +214,13 @@ void HmmFree(void *ptr){
 		
 	
 	}
-	
+	/*
 	last_block = GetLastBlock((block_t *)Heap);
 	if(last_block->length > PROGRAM_BRK_DEC + (2*STRUCT_SIZE)){
 		last_block->length -= PROGRAM_BRK_DEC;
 		program_brk -= PROGRAM_BRK_DEC;
 	}
+	*/
 		
 }
 

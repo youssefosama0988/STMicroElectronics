@@ -46,9 +46,9 @@ void InsertBlockAtEnd(block_t *head , block_t *new_block , int data){
 		local_block = local_block -> next_free_block;
 	}
 	
-	new_block -> next_free_block     = NULL;		// link the next of the inserted block by  NULL
-	new_block -> previous_free_block = local_block;		// link the previous of the inserted block by the last block
-	local_block -> next_free_block  = new_block;		// link the next of the last block to the inserted block
+	new_block->next_free_block     = NULL;		// link the next of the inserted block by  NULL
+	new_block->previous_free_block = local_block;		// link the previous of the inserted block by the last block
+	local_block->next_free_block   = new_block;		// link the next of the last block to the inserted block
 	
 	new_block -> length = data;
 
@@ -121,8 +121,10 @@ void DeleteBlock(block_t *block){
 /* search for first fit */
 block_t* SearchSize(block_t *head ,int required){
 	block_t *local_block = head;
-	
-	while( (local_block -> length) <= required ){
+	if(head == NULL){
+		return NULL;
+	}
+	while( (local_block -> length) < required ){
 		
 		if(NULL == local_block -> next_free_block){
 			return NULL;

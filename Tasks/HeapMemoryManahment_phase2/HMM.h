@@ -5,6 +5,7 @@
 #include "LinkedList.h"
 #include <string.h>
 
+
 /*---------------Macros----------------------*/
 
 #define KBYTE                  1024
