@@ -45,8 +45,10 @@ void random_alloc_free_test() {
 
 int main() {
     printf("Starting random allocation and deallocation test...\n");
+    DisplayBlocks(Heap);
     random_alloc_free_test();
     printf("Test complete.\n");
+    DisplayBlocks(Heap);
     return 0;
 }
 

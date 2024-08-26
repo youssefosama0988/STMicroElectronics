@@ -61,14 +61,12 @@ block_t* SearchAddress(block_t *head , block_t *new_block){
 	
 	while( local_block < new_block ){
 		
-		if(NULL == local_block -> next_free_block){
-		
-			return NULL;
+		if(local_block->next_free_block == NULL){
+			return local_block;
 		}
-		
-		local_block = local_block -> next_free_block;
+		local_block = local_block->next_free_block;
 	}
-	return (local_block -> previous_free_block);            // return pointer to the block before the new block
+	return local_block->previous_free_block;            // return pointer to the block before the new block
 
 }
 

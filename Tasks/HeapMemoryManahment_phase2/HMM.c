@@ -1,6 +1,6 @@
 #include "HMM.h"
 
-char Heap[SIZE_OF_HEAP];
+long long Heap[SIZE_OF_HEAP];
 void *program_brk = Heap;
 
 void *malloc(size_t size){
@@ -28,17 +28,17 @@ void *HmmAlloc(size_t size){
 	block_t *ret;
 	
 	size = ((size + 7)/8)*8;			//size allignment
-	if(size<48){
+	if(size<=48){
 		size = 2*STRUCT_SIZE;
 	}	
 	
 	/* First Allocation */
 	if(program_brk == Heap){
-		program_brk += PROGRAM_BRK_INC;	            //increment program_brk by pages with respect to the size of allocation
+		program_brk += PROGRAM_BRK_INC;	            //increment program_brk by 136KB
 		/* initialize the first struct */
 		((block_t *)Heap) -> previous_free_block = NULL;
 		((block_t *)Heap) -> next_free_block = NULL;
-		((block_t *)Heap) -> length = SIZE_OF_HEAP;
+		((block_t *)Heap) -> length = SIZE_OF_HEAP*sizeof(long long);
 		
 		InsertBlockAtEnd( (block_t *)Heap, head, PROGRAM_BRK_INC-STRUCT_SIZE);	//add Head node
 		ret = Split(head , size+OFFSET);					//split func. split the passed block and return pointer to the rest.
@@ -139,7 +139,7 @@ void HmmFree(void *ptr){
 	int size;
 	block_t *block_before;
 	block_t *block_after;
-	block_t *last_block;
+	//block_t *last_block;
 	bool merge_3blocks_condition;
 	bool merge_2blocks_condition;
 	
@@ -153,7 +153,7 @@ void HmmFree(void *ptr){
 	block_before = SearchAddress((block_t *)Heap , (block_t *)ptr);
 	
 	
-	if(NULL == block_before){		//no free blocks located before the allocated block 
+	if(NULL == block_before){		//no free blocks located before the allocated block ,insert at the beginning
 		
 		((block_t *)Heap) -> next_free_block -> previous_free_block = ((block_t *)ptr);
 		((block_t *)ptr)  -> previous_free_block = ((block_t *)Heap);
@@ -163,18 +163,21 @@ void HmmFree(void *ptr){
 		((block_t *)ptr) -> length = size;
 		
 	}
-	else if(block_before == (block_t *)Heap){
+	else if(block_before == (block_t *)Heap){					//insert at the beginning	
 	       block_after = block_before -> next_free_block;
-	       
-	       if( ((void *)block_after) == ptr+size ){
-		       
-		       InsertBlockAfter((block_t *)Heap, (block_t *)ptr , size + (block_after -> length));
-		       DeleteBlock(block_after);
-	       }
-	       else{
-		       InsertBlockAfter((block_t *)Heap,(block_t *)ptr,size);                  
-	       }
-       
+	       if(NULL != block_after){
+		       if( ((void *)block_after) == ptr+size ){
+			       
+			       InsertBlockAfter((block_t *)Heap, (block_t *)ptr , size + (block_after -> length));   //merging
+			       DeleteBlock(block_after);
+		       }
+		       else{
+			       InsertBlockAfter((block_t *)Heap,(block_t *)ptr,size);                  
+		       }
+       		}
+       		else{
+       			InsertBlockAfter((block_t *)Heap,(block_t *)ptr,size);
+       		}	
 	}
 	
 	else{
@@ -214,13 +217,13 @@ void HmmFree(void *ptr){
 		
 	
 	}
-	/*
-	last_block = GetLastBlock((block_t *)Heap);
+	
+	block_t *last_block = GetLastBlock((block_t *)Heap);
 	if(last_block->length > PROGRAM_BRK_DEC + (2*STRUCT_SIZE)){
 		last_block->length -= PROGRAM_BRK_DEC;
 		program_brk -= PROGRAM_BRK_DEC;
 	}
-	*/
+	
 		
 }
 
@@ -239,24 +242,38 @@ void *HmmCalloc(size_t nmemb, size_t size){
 /*===============================================================================================================================================================*/
 
 void *HmmRealloc(void *ptr, size_t size){
-	block_t *ret=NULL;
-	if(0 == size){                  //free
-		HmmFree(ptr);
-		return NULL;
+	void *ret=NULL;
+	int old_size;
+	/* save the current size of the block */
+	if(NULL != ptr){
+		old_size = *(int *)(ptr-OFFSET);        //actual user size + OFFSET
+		old_size -= OFFSET;			// actual user size 
+
 	}
-	else if(NULL == ptr){		//malloc
+	
+	if(NULL == ptr){		//malloc
 	
 		return HmmAlloc(size);
 	}
-	else if(0){    			//need to add condition if new size smaller than current size.
+	else if(0 == size){		//free
 	
-		Split(ptr,size);
+		HmmFree(ptr);
+		return NULL;
+	}
+	
+	else if(old_size >= size){    			//need to add condition if new size smaller than current size.	
+		
+		return ptr;
 	}
 	else{
 		/***need to edit***/
-		HmmFree(ptr);
+		
 		ret = HmmAlloc(size);
-		memcpy(ptr,ret,size);
+		if(NULL != ret){
+			memcpy(ret,ptr,old_size);
+			HmmFree(ptr);
+		}
+		
 		return ret;
 		
 	}
