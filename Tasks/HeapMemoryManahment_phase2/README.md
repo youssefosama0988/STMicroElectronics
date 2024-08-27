@@ -1,22 +1,31 @@
 # *Heap Memory Management*
- contains a custom implementation of heap memory management functions, including **malloc** and **free**. The purpose of this implementation is to demonstrate and explore how dynamic memory allocation can be managed at a low level.
+ This project demonstrates custom heap memory management by replacing the standard library functions **malloc**, **calloc**, **realloc**, and **free** with custom implementations. This can be useful for optimizing memory usage, debugging memory leaks, or experimenting with different memory allocation strategies.
  
 ## Overview
-This project includes implementations of the **malloc** and **free** functions to manage dynamic memory allocation on the heap. The goal is to provide insight into how memory allocation works under the hood.
+This project includes implementations of the **malloc**, **calloc**, **realloc**, and **free** functions to manage dynamic memory allocation on the heap. The goal is to provide insight into how memory allocation works under the hood.
 
-## Features
-- **Custom malloc** Implementation: Allocates a block of memory of a specified size.
-- **Custom free** Implementation: Deallocates previously allocated memory.
-- **Educational**: Designed to help understand memory management concepts
+## Objectives
 
-
-
+   **Understand Custom Memory Management:** Learn how to manage memory allocation and deallocation manually.
+   
+   **Replace Standard Library Functions:** Override malloc, calloc, realloc, and free to use custom implementations.
+   
+   **Experiment with Custom Strategies:** Test and debug different memory management techniques.
+<br>
 ## Building commands 
 ```
 
   git clone repoURL
+
+  /*to run the test program (main.c include the test). */
   gcc main.c HMM.c LinkedList.c -o hmm
-  ./hmm                                 // to run the program (main.c include the test).
+  ./hmm                                 
+
+  gcc -g -fPIC -Wall -shared HMM.c LinkedList.c -o libHmm.so             // command to make the shared library.
+  export LD_PRELOAD=`realpath libHmm.so`                                 // using libHmm.so instead of the standard ones.
+
+ /* to run command immediately with the library*/
+ LD_PRELOAD=`realpath libHmm.so` command
 
 ```
 ## Output sample of the test program
@@ -33,3 +42,7 @@ This project includes implementations of the **malloc** and **free** functions t
 
 ![Malloc](https://github.com/user-attachments/assets/b176e74d-1242-4675-ac29-b9b9f4574127)
 ---------------
+
+## Contact
+
+For questions or contributions, please contact **Youssef Osama** at youssefosama789456@gmail.com .
