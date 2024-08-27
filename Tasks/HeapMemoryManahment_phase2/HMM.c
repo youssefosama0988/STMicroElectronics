@@ -1,6 +1,6 @@
 #include "HMM.h"
 
-long long Heap[SIZE_OF_HEAP];
+long long Heap[SIZE_OF_HEAP/sizeof(long long)];
 void *program_brk = Heap;
 
 void *malloc(size_t size){
@@ -38,7 +38,7 @@ void *HmmAlloc(size_t size){
 		/* initialize the first struct */
 		((block_t *)Heap) -> previous_free_block = NULL;
 		((block_t *)Heap) -> next_free_block = NULL;
-		((block_t *)Heap) -> length = SIZE_OF_HEAP*sizeof(long long);
+		((block_t *)Heap) -> length = SIZE_OF_HEAP;
 		
 		InsertBlockAtEnd( (block_t *)Heap, head, PROGRAM_BRK_INC-STRUCT_SIZE);	//add Head node
 		ret = Split(head , size+OFFSET);					//split func. split the passed block and return pointer to the rest.
@@ -153,17 +153,7 @@ void HmmFree(void *ptr){
 	block_before = SearchAddress((block_t *)Heap , (block_t *)ptr);
 	
 	
-	if(NULL == block_before){		//no free blocks located before the allocated block ,insert at the beginning
-		
-		((block_t *)Heap) -> next_free_block -> previous_free_block = ((block_t *)ptr);
-		((block_t *)ptr)  -> previous_free_block = ((block_t *)Heap);
-		((block_t *)ptr)  -> next_free_block = ((block_t *)Heap) -> next_free_block;
-		((block_t *)Heap) -> next_free_block = (block_t *)ptr;
-		
-		((block_t *)ptr) -> length = size;
-		
-	}
-	else if(block_before == (block_t *)Heap){					//insert at the beginning	
+	if(block_before == (block_t *)Heap){					//insert at the beginning	
 	       block_after = block_before -> next_free_block;
 	       if(NULL != block_after){
 		       if( ((void *)block_after) == ptr+size ){

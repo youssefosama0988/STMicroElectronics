@@ -159,7 +159,7 @@ void DisplayBlocks(block_t *head){
 	while(NULL != local_block){
 		
 		printf("Block number: %i\n" , counter++);
-		printf("    Address = %i \t length = %i\n" , (block_t *)local_block , local_block -> length);
+		printf("    Address = %p \t length = %i\n" , (block_t *)local_block , local_block -> length);
 		printf("\n");		
 		local_block = local_block -> next_free_block;
 	}

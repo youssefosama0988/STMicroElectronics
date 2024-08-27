@@ -10,7 +10,7 @@
 
 #define KBYTE                  1024
 #define MBYTE                 (KBYTE*KBYTE)
-#define SIZE_OF_HEAP          (512*MBYTE)/8
+#define SIZE_OF_HEAP          (512*MBYTE)
 #define PAGE                  (4*KBYTE)
 #define STRUCT_SIZE            24
 #define OFFSET                 8
@@ -21,7 +21,7 @@
 
 /*-----------Variables Declarations-------------*/
 
-extern long long Heap[SIZE_OF_HEAP];
+extern long long Heap[SIZE_OF_HEAP/sizeof(long long)];
 extern void *program_brk;
 
 /* ----------Functions Declarations------------*/
