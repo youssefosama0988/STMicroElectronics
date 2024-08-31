@@ -24,3 +24,4 @@ This tool aims to provide similar functionality to the traditional fdisk -l comm
   - Requires root permissions to access disk device files.
 
 ## Example
+![Fdisk_Output](https://github.com/user-attachments/assets/7e996b5e-7e12-4652-bab9-dc8627985b96)
