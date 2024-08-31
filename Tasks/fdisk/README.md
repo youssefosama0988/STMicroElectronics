@@ -1,6 +1,6 @@
-## FDisk
+## ***FDisk***
 fdisk is a custom implementation of the fdisk -l command, which is used to list the disk partitions on a Linux system.
-This tool aims to provide similar functionality to the traditional fdisk -l command.
+This tool aims to provide similar functionality to the traditional **fdisk -l** command.
 
 ## Features
  - Lists all disk partitions and their details.
@@ -17,7 +17,7 @@ This tool aims to provide similar functionality to the traditional fdisk -l comm
   gcc fdisk.c -o myfdisk
 
   /*to run the program*/
-  sudo ./myfdisk /dev/sda       /* /dev/sda for example*/
+  sudo ./myfdisk /dev/sdx       /* Replace /dev/sdX with the appropriate device identifier (e.g., /dev/sda). */
   
 ```
 ## Limitations
