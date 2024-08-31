@@ -9,6 +9,8 @@ int main(int argc , char**argv){
 	ssize_t read_size;
 	PartitionEntry *partition_entry_ptr;
 	PartitionEntry *extended_partition_ptr = NULL;
+	PartitionEntry *next;
+	uint64_t absolute_lba;
 	int i = 0;
 	off_t lseek_offset;
 	uint64_t offset;
@@ -73,6 +75,7 @@ int main(int argc , char**argv){
 			perror("lseek ");
 			return -1;
 		}
+		
 		read_size = read(fd , buff2 , BLOCK_SIZE);
 	
 		if(read_size <= 0){
@@ -83,14 +86,14 @@ int main(int argc , char**argv){
 		partition_entry_ptr = (PartitionEntry *)&buff2[446];
 		
 		printf("%s%i %-11c %-10u %-10u %-10u %u%s %10x",
-		argv[1],i+1,
-		partition_entry_ptr->status == 0x80? '*':' ',
-		(partition_entry_ptr->lba + extended_partition_ptr->lba),
-		partition_entry_ptr->lba + extended_partition_ptr->lba + partition_entry_ptr->sector_count - 1,
-		partition_entry_ptr->sector_count,
-		(uint32_t)(((uint64_t)partition_entry_ptr->sector_count * 512)/(1024 * 1024 * 1024)),
-		"G",
-		partition_entry_ptr->type
+			argv[1],i+1,
+			partition_entry_ptr->status == 0x80? '*':' ',
+			(partition_entry_ptr->lba + extended_partition_ptr->lba),
+			partition_entry_ptr->lba + extended_partition_ptr->lba + partition_entry_ptr->sector_count - 1,
+			partition_entry_ptr->sector_count,
+			(uint32_t)(((uint64_t)partition_entry_ptr->sector_count * 512)/(1024 * 1024 * 1024)),
+			"G",
+			partition_entry_ptr->type
 		);
 		if( partition_entry_ptr->type == 0x83){
 			printf("%14s","Linux\n");
@@ -100,6 +103,51 @@ int main(int argc , char**argv){
 		}
 		else
 			printf("\n");
+			
+		absolute_lba = extended_partition_ptr->lba;	
+		while((partition_entry_ptr+1)->type != 0x00){
+			absolute_lba += (partition_entry_ptr+1)->lba;
+			i++;
+			offset = (uint64_t)absolute_lba * 512 ;
+			offset = lseek(fd , offset , SEEK_SET);
+			
+			if(-1 == offset){
+				perror("lseek ");
+				return -1;
+			}
+			
+			read_size = read(fd , buff2 , BLOCK_SIZE);
+		
+			if(read_size <= 0){
+				perror("read ");
+				return -1;
+			}
+			
+			partition_entry_ptr = (PartitionEntry *)&buff2[446];
+			
+			printf("%s%i %-11c %-10lu %-10lu %-10u %u%s %10x",
+				argv[1],i+1,
+				partition_entry_ptr->status == 0x80? '*':' ',
+				(partition_entry_ptr->lba + absolute_lba),
+				partition_entry_ptr->lba + absolute_lba + partition_entry_ptr->sector_count - 1,
+				partition_entry_ptr->sector_count,
+				(uint32_t)(((uint64_t)partition_entry_ptr->sector_count * 512)/(1024 * 1024 * 1024)),
+				"G",
+				partition_entry_ptr->type
+			);
+			if( partition_entry_ptr->type == 0x83){
+				printf("%14s","Linux\n");
+			}
+			else if( partition_entry_ptr->type == 0x05){
+				printf("%14s","Extended\n");
+			}
+			else
+				printf("\n");
+				
+			absolute_lba = 	extended_partition_ptr->lba;
+
+		}	
+			
 	}
 	
 	close(fd);
