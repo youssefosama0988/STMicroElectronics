@@ -1,19 +1,20 @@
 ## ***FDisk***
-fdisk is a custom implementation of the fdisk -l command, which is used to list the disk partitions on a Linux system.
+This project is a custom implementation of the 'fdisk -l' command, which is used to list the disk partitions on a Linux system.
 This tool aims to provide similar functionality to the traditional **fdisk -l** command.
+It supports both **Master Boot Record (MBR)** and **GUID Partition Table (GPT)** partitioning schemes.
 
 ## Features
  - Lists all disk partitions and their details.
  - Shows details such as partition start, end, size, and type.
  - Provides a user-friendly output format.
- - Allows for additional options and customizations.
+ - Supports both MBR and GPT partitioning schemes.
 
 <br>
 
 ## Building commands 
 
 ```
-  git clone repoURL
+  git clone https://github.com/youssefosama0988/STMicroElectronics/tree/main/Tasks/fdisk
   gcc fdisk.c -o myfdisk
 
   /*to run the program*/
