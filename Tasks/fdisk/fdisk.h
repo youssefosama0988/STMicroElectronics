@@ -10,8 +10,9 @@
 #include <string.h>
 
 
-#define BLOCK_SIZE   512
-
+#define BLOCK_SIZE   	512
+#define GBYTE      	(1024*1024*1024)
+#define MBYTE 		(1024*1024)
 
 
 typedef struct{

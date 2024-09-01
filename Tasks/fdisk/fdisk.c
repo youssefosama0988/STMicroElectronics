@@ -6,6 +6,7 @@ int main(int argc , char**argv){
 	char buff[BLOCK_SIZE];
 	char buff2[BLOCK_SIZE];
 	int fd;
+	uint64_t partition_size;
 	ssize_t read_size;
 	PartitionEntry *partition_entry_ptr;
 	PartitionEntry *extended_partition_ptr = NULL;
@@ -14,6 +15,7 @@ int main(int argc , char**argv){
 	int i = 0;
 	uint64_t offset;
 	
+	/* check if the arguments less than 2*/
 	if(2 != argc){
 		printf("Arguments Invalid\n");
 		return -1;
@@ -35,7 +37,7 @@ int main(int argc , char**argv){
 	
 	partition_entry_ptr = (PartitionEntry *)&buff[446];
 	
-	/*Handle MBR */	
+	/*------------------------Handle MBR ----------------------------------*/	
 	if(partition_entry_ptr[i].type != 0xee){
 		printf("\033[1m%-10s %-10s %-10s %-10s %-10s %-10s %-10s %s\033[0m\n","Device","Boot","Start","End","Sectors","Size","Id","Type");
 		
@@ -45,14 +47,14 @@ int main(int argc , char**argv){
 			}
 			
 			printf("%s%i %-11c %-10u %-10u %-10u %u%s %10x",
-			argv[1],i+1,
-			partition_entry_ptr[i].status == 0x80? '*':' ',
-			partition_entry_ptr[i].lba,
-			partition_entry_ptr[i].lba + partition_entry_ptr[i].sector_count - 1,
-			partition_entry_ptr[i].sector_count,
-			(uint32_t)(((uint64_t)partition_entry_ptr[i].sector_count * 512)/(1024 * 1024 * 1024)),
-			"G",
-			partition_entry_ptr[i].type
+				argv[1],i+1,
+				partition_entry_ptr[i].status == 0x80? '*':' ',
+				partition_entry_ptr[i].lba,
+				partition_entry_ptr[i].lba + partition_entry_ptr[i].sector_count - 1,
+				partition_entry_ptr[i].sector_count,
+				(uint32_t)(((uint64_t)partition_entry_ptr[i].sector_count * 512)/(1024 * 1024 * 1024)),
+				"G",
+				partition_entry_ptr[i].type
 			);
 			
 			if( partition_entry_ptr[i].type == 0x83){
@@ -63,12 +65,12 @@ int main(int argc , char**argv){
 				extended_partition_ptr = (partition_entry_ptr+i);
 			}
 			else
-				printf("\n");
-			
+				printf("\n");	
 		}
-	}	
-	/*Support GPT*/
-	if(partition_entry_ptr[i].type == 0xee){
+	}
+		
+	/*-----------------------Support GPT-----------------------------------*/
+	else if(partition_entry_ptr[i].type == 0xee){
 		i=0;
 		printf("\033[1m%-10s %-10s %-10s %-10s %-10s %s\033[0m\n","Device","Start","End","Sectors","Size","Type");
 		offset = (uint64_t) 2 * 512;             //skip first 2 blocks
@@ -88,14 +90,22 @@ int main(int argc , char**argv){
 		
 		gpt_ptr = (GPTPartitionEntry *)&buff2[0];
 		while(gpt_ptr->first_lba != 0x0){
+			partition_size = (gpt_ptr->last_lba - gpt_ptr->first_lba + 1)*512;
 			
-			printf("%s%i  %-10lu %-10lu %-10lu %lu\n",
+			printf("%s%i  %-10lu %-10lu %-11lu",
 				argv[1],i+1,
 				gpt_ptr->first_lba,
 				gpt_ptr->last_lba,
-				gpt_ptr->last_lba - gpt_ptr->first_lba + 1,
-				(uint64_t)((gpt_ptr->last_lba - gpt_ptr->first_lba + 1)*512)/(1024*1024*1024)
+				gpt_ptr->last_lba - gpt_ptr->first_lba + 1
+				
 			);
+			if(partition_size >=GBYTE){
+				printf("%lu%c\n",partition_size/GBYTE , 'G');
+			}
+			else{
+				printf("%lu%c\n",partition_size/MBYTE , 'M');
+			}
+			
 			read_size = read(fd , buff2 , 128);
 	
 			if(read_size <= 0){
@@ -107,7 +117,7 @@ int main(int argc , char**argv){
 		}	
 	}
 	
-	
+	/* Hanle logical Partitions */
 	if(NULL != extended_partition_ptr){
 		
 		i = 4;
@@ -189,7 +199,6 @@ int main(int argc , char**argv){
 				printf("\n");
 				
 			absolute_lba = 	extended_partition_ptr->lba;
-
 		}			
 	}
 	
