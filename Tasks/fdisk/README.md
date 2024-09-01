@@ -1,13 +1,15 @@
 ## ***FDisk***
 This project is a custom implementation of the 'fdisk -l' command, which is used to list the disk partitions on a Linux system.
-This tool aims to provide similar functionality to the traditional **fdisk -l** command.
-It supports both **Master Boot Record (MBR)** and **GUID Partition Table (GPT)** partitioning schemes.
+
+## Overview
+command-line tool for parsing and displaying partition information from disk images. It supports both **Master Boot Record (MBR)** and **GUID Partition Table (GPT)** partitioning schemes. The tool reads partition tables and provides detailed information about each partition, including type, size, and start/end sectors.
 
 ## Features
- - Lists all disk partitions and their details.
+ - **MBR Parsing:** Handles MBR partition tables, displaying information about primary and extended partitions.
+ - **GPT Parsing:** Supports GPT partition tables, showing details for each partition in the GPT.
+ - **Logical Partitions:** Supports displaying logical partitions within extended partitions in MBR.
  - Shows details such as partition start, end, size, and type.
  - Provides a user-friendly output format.
- - Supports both MBR and GPT partitioning schemes.
 
 <br>
 
@@ -23,6 +25,14 @@ It supports both **Master Boot Record (MBR)** and **GUID Partition Table (GPT)**
 ```
 ## Limitations
   - Requires root permissions to access disk device files.
+  - Unsupported Formats: The program assumes MBR or GPT format and may not handle other types of partitioning schemes.
 
 ## Example
+
+MBR example:
+
 ![Fdisk_Output](https://github.com/user-attachments/assets/7e996b5e-7e12-4652-bab9-dc8627985b96)
+
+GPT example:
+
+![GPT output](https://github.com/user-attachments/assets/0bbb10a0-e809-4675-bdd2-479abf513a9a)
