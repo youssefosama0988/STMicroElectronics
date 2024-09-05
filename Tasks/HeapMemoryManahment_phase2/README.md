@@ -15,7 +15,7 @@ This project includes implementations of the **malloc**, **calloc**, **realloc**
 ## Building commands 
 ```
 
-  git clone https://github.com/youssefosama0988/STMicroElectronics/edit/main/Tasks/HeapMemoryManahment_phase2
+  git clone https://github.com/youssefosama0988/STMicroElectronics/tree/main/Tasks/HeapMemoryManahment_phase2
 
   /*to run the test program (main.c include the test). */
   gcc main.c HMM.c LinkedList.c -o hmm
