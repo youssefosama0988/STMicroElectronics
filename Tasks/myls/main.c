@@ -4,9 +4,8 @@
 int main(int argc , char** argv){
 	int opt;
 	int rv;
-	struct dirent Entries[2048];
+	CombinedStat_t Entries[2048];
 	MaxSizes_t* max_sizes;
-	struct stat Files[2048];
 	int entries_number = 0;
 	int i = 0;
 	Options_t options = {
@@ -46,14 +45,43 @@ int main(int argc , char** argv){
 		/* get the entry of the directory and save it in the array and return no. of entries */
 		entries_number = GetEntries(".",Entries);
 		
-		qsort(Entries, entries_number, sizeof(struct dirent), cmpstringp);
-		max_sizes = GetLstat("." , Entries , Files);
-		
-		if(options.oneLine_opt){
-			PrintOneLine(max_sizes , Entries , Files , &options);
+		if(entries_number){
+			if(options.f_opt){
+				//don't sort except with -c option sort by ctime
+				if(options.c_opt)
+					qsort(Entries, entries_number, sizeof(CombinedStat_t), Cmp_Ctime);
+			}
+			else if(options.c_opt)
+				qsort(Entries, entries_number, sizeof(CombinedStat_t), Cmp_Ctime);		//sorting by change time
+				
+			else if(options.u_opt)
+				qsort(Entries, entries_number, sizeof(CombinedStat_t), Cmp_Atime);		//sorting by Access time
+				
+			else if(options.t_opt)
+				qsort(Entries, entries_number, sizeof(CombinedStat_t), Cmp_Mtime);		//sorting by Modification time
+				
+			else
+				qsort(Entries, entries_number, sizeof(CombinedStat_t), cmpstringp);		//sorting by name.
+
+			
+			/* get lstat structures and return struct contains the maximum width of each field */
+			max_sizes = GetLstat("." , Entries );
+			
+			if(options.oneLine_opt){
+				PrintOneLine(max_sizes , Entries , &options);
+			}
+			else if(options.long_format_opt){
+				PrintLongFormat(argv[optind] , max_sizes , Entries , &options);
+			}
+			else{
+				NormalPrint(max_sizes , Entries, &options);
+			}
+			
+			
 		}
-		else if(options.long_format_opt){
-			PrintLongFormat("." , max_sizes , Entries , Files , &options);
+		else{
+			printf("No entries!\n");
+		
 		}
 		
 	}
@@ -66,29 +94,36 @@ int main(int argc , char** argv){
 		entries_number = GetEntries( argv[optind] , Entries);
 		
 		if(entries_number){
-			if(options.f_opt){
-				//don't sort except with -c option
-			}
-			else if(options.t_opt){
-				//sorting by time with 
-				
-				
-			}
-			else{
-				qsort(Entries, entries_number, sizeof(struct dirent), cmpstringp);	//sorting by name.
-			}
-			
 			/* get lstat structures and return struct contains the maximum width of each field */
-			max_sizes = GetLstat(argv[optind] , Entries , Files);
+			max_sizes = GetLstat(argv[optind] , Entries );
+			
+			if(options.f_opt){
+				//don't sort except with -c option sort by ctime
+				if(options.c_opt)
+					qsort(Entries, entries_number, sizeof(CombinedStat_t), Cmp_Ctime);
+			}
+			else if(options.c_opt)
+				qsort(Entries, entries_number, sizeof(CombinedStat_t), Cmp_Ctime);		//sorting by change time
+				
+			else if(options.u_opt)
+				qsort(Entries, entries_number, sizeof(CombinedStat_t), Cmp_Atime);		//sorting by Access time
+				
+			else if(options.t_opt)
+				qsort(Entries, entries_number, sizeof(CombinedStat_t), Cmp_Mtime);		//sorting by Modification time
+				
+			else
+				qsort(Entries, entries_number, sizeof(CombinedStat_t), cmpstringp);		//sorting by name.
+
 			
 			if(options.oneLine_opt){
-				PrintOneLine(max_sizes , Entries , Files , &options);
+					
+				PrintOneLine(max_sizes , Entries , &options);
 			}
 			else if(options.long_format_opt){
-				PrintLongFormat(argv[optind] , max_sizes , Entries , Files , &options);
+				PrintLongFormat(argv[optind] , max_sizes , Entries , &options);
 			}
 			else{
-				NormalPrint(max_sizes , Entries , Files , &options);
+				NormalPrint(max_sizes , Entries, &options);
 			
 			}
 			

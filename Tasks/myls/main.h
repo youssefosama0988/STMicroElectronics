@@ -5,6 +5,7 @@
 #include <ctype.h>
 #include <string.h>
 #include <stdio.h>
+#include <ctype.h>
 #include <stdlib.h>
 #include <unistd.h>
 #include <stdbool.h>
@@ -45,11 +46,21 @@ typedef struct{
 	bool oneLine_opt	;
 }Options_t;
 
-int GetEntries(char *dirName,struct dirent Entries[]);
-MaxSizes_t* GetLstat(char *dir_path , struct dirent Entries[] , struct stat Files[]);
-void NormalPrint(MaxSizes_t* max_sizes , struct dirent* Entries , struct stat* Files , Options_t* options);
-void PrintOneLine(MaxSizes_t* max_sizes , struct dirent* Entries , struct stat* Files , Options_t* options);
-void PrintLongFormat(char *dir_path , MaxSizes_t* max_sizes , struct dirent* Entries , struct stat* Files , Options_t* options);
+typedef struct{
+	char name[256];
+	struct stat Files;
+
+}CombinedStat_t;
+
+
+int GetEntries(char *dirName,CombinedStat_t Entries[]);
+MaxSizes_t* GetLstat(char *dir_path , CombinedStat_t Entries[]);
+void NormalPrint(MaxSizes_t* max_sizes , CombinedStat_t* Entries, Options_t* options);
+void PrintOneLine(MaxSizes_t* max_sizes , CombinedStat_t* Entries , Options_t* options);
+void PrintLongFormat(char *dir_path , MaxSizes_t* max_sizes , CombinedStat_t* Entries , Options_t* options);
 int cmpstringp(const void *p1, const void *p2);
+int Cmp_Atime(const void *p1, const void *p2);
+int Cmp_Ctime(const void *p1, const void *p2);
+int Cmp_Mtime(const void *p1, const void *p2);
 
 #endif
