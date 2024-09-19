@@ -4,9 +4,10 @@
 int main(int argc , char** argv){
 	int opt;
 	int rv;
-	struct dirent Entries[128];
+	struct dirent Entries[2048];
 	MaxSizes_t* max_sizes;
-	struct stat Files[128];
+	struct stat Files[2048];
+	int entries_number = 0;
 	int i = 0;
 	Options_t options = {
 	 	.all_opt 	= false ,
@@ -26,7 +27,7 @@ int main(int argc , char** argv){
 			case 'a': options.all_opt         = true;       break;
 			case 'l': options.long_format_opt = true;       break;
 			case 't': options.t_opt 	  = true;       break;
-			case 'u': options.long_format_opt = true;  	break;
+			case 'u': options.u_opt		  = true;  	break;
 			case 'c': options.c_opt 	  = true;       break;
 			case 'i': options.inode_opt       = true;       break;
 			case 'f': options.f_opt 	  = true;       break;
@@ -41,26 +42,68 @@ int main(int argc , char** argv){
 	/* check if the first non-option argument is NULL --> print CWD "."*/
 	if(argv[optind] == NULL ){
 		printf("Listing Current working Directory\n");
-		GetEntries(".",Entries);
+		
+		/* get the entry of the directory and save it in the array and return no. of entries */
+		entries_number = GetEntries(".",Entries);
+		
+		qsort(Entries, entries_number, sizeof(struct dirent), cmpstringp);
 		max_sizes = GetLstat("." , Entries , Files);
-		PrintOneLine(max_sizes , Entries , &options);
+		
+		if(options.oneLine_opt){
+			PrintOneLine(max_sizes , Entries , Files , &options);
+		}
+		else if(options.long_format_opt){
+			PrintLongFormat("." , max_sizes , Entries , Files , &options);
+		}
+		
 	}
 	
 	while(argv[optind] != NULL){
 	
 		printf("\nListing '%s' Directory\n", argv[optind]);
 		
-		/* get the entry of the directory and save it in the arry */
-		GetEntries(  argv[optind] , Entries);
+		/* get the entry of the directory and save it in the array and return no. of entries */
+		entries_number = GetEntries( argv[optind] , Entries);
 		
-		/* get lstat structs*/
-		max_sizes = GetLstat(argv[optind] , Entries , Files);
-		PrintOneLine(max_sizes , Entries , &options);
+		if(entries_number){
+			if(options.f_opt){
+				//don't sort except with -c option
+			}
+			else if(options.t_opt){
+				//sorting by time with 
+				
+				
+			}
+			else{
+				qsort(Entries, entries_number, sizeof(struct dirent), cmpstringp);	//sorting by name.
+			}
+			
+			/* get lstat structures and return struct contains the maximum width of each field */
+			max_sizes = GetLstat(argv[optind] , Entries , Files);
+			
+			if(options.oneLine_opt){
+				PrintOneLine(max_sizes , Entries , Files , &options);
+			}
+			else if(options.long_format_opt){
+				PrintLongFormat(argv[optind] , max_sizes , Entries , Files , &options);
+			}
+			else{
+				NormalPrint(max_sizes , Entries , Files , &options);
+			
+			}
+			
+			
+		}
+		else{
+			printf("No entries!\n");
+		
+		}
 		
 		/* get the next directory if exist*/
 		optind++;
 		free(max_sizes);
-	}		
+	}
+	return 0;		
 }
 
 

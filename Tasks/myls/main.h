@@ -1,6 +1,7 @@
 #ifndef MAIN_H	
 #define MAIN_H
 
+#define _XOPEN_SOURCE 700
 #include <ctype.h>
 #include <string.h>
 #include <stdio.h>
@@ -14,6 +15,11 @@
 #include <errno.h>
 #include <grp.h>
 #include <pwd.h>
+#include <time.h>
+#include <sys/ioctl.h>
+
+
+#define PATH_MAX         256
 
 extern char *optarg;
 extern int optind, opterr, optopt;
@@ -25,6 +31,7 @@ typedef struct{
 	int file_gr;
 	int file_owner;
 	int file_inode;
+	int file_time;
 }MaxSizes_t;
 
 typedef struct{
@@ -40,7 +47,9 @@ typedef struct{
 
 int GetEntries(char *dirName,struct dirent Entries[]);
 MaxSizes_t* GetLstat(char *dir_path , struct dirent Entries[] , struct stat Files[]);
-void PrintOneLine(MaxSizes_t* max_sizes , struct dirent Entries[] , Options_t* options);
-
+void NormalPrint(MaxSizes_t* max_sizes , struct dirent* Entries , struct stat* Files , Options_t* options);
+void PrintOneLine(MaxSizes_t* max_sizes , struct dirent* Entries , struct stat* Files , Options_t* options);
+void PrintLongFormat(char *dir_path , MaxSizes_t* max_sizes , struct dirent* Entries , struct stat* Files , Options_t* options);
+int cmpstringp(const void *p1, const void *p2);
 
 #endif
