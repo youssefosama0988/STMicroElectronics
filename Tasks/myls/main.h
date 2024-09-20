@@ -58,6 +58,7 @@ MaxSizes_t* GetLstat(char *dir_path , CombinedStat_t Entries[]);
 void NormalPrint(MaxSizes_t* max_sizes , CombinedStat_t* Entries, Options_t* options);
 void PrintOneLine(MaxSizes_t* max_sizes , CombinedStat_t* Entries , Options_t* options);
 void PrintLongFormat(char *dir_path , MaxSizes_t* max_sizes , CombinedStat_t* Entries , Options_t* options);
+void ColoredFileName(int mode , char *colored_name , char *file_name);
 int cmpstringp(const void *p1, const void *p2);
 int Cmp_Atime(const void *p1, const void *p2);
 int Cmp_Ctime(const void *p1, const void *p2);

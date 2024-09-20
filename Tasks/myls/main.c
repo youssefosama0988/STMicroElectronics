@@ -51,15 +51,15 @@ int main(int argc , char** argv){
 				if(options.c_opt)
 					qsort(Entries, entries_number, sizeof(CombinedStat_t), Cmp_Ctime);
 			}
-			else if(options.c_opt)
-				qsort(Entries, entries_number, sizeof(CombinedStat_t), Cmp_Ctime);		//sorting by change time
+			else if(options.t_opt){
+				if(options.c_opt)
+					qsort(Entries, entries_number, sizeof(CombinedStat_t), Cmp_Ctime);		//sorting by change time
 				
-			else if(options.u_opt)
-				qsort(Entries, entries_number, sizeof(CombinedStat_t), Cmp_Atime);		//sorting by Access time
-				
-			else if(options.t_opt)
-				qsort(Entries, entries_number, sizeof(CombinedStat_t), Cmp_Mtime);		//sorting by Modification time
-				
+				else if(options.u_opt)
+					qsort(Entries, entries_number, sizeof(CombinedStat_t), Cmp_Atime);		//sorting by Access time
+				else 
+					qsort(Entries, entries_number, sizeof(CombinedStat_t), Cmp_Mtime);		//sorting by Modification time
+			}
 			else
 				qsort(Entries, entries_number, sizeof(CombinedStat_t), cmpstringp);		//sorting by name.
 
@@ -102,13 +102,16 @@ int main(int argc , char** argv){
 				if(options.c_opt)
 					qsort(Entries, entries_number, sizeof(CombinedStat_t), Cmp_Ctime);
 			}
-			else if(options.t_opt)
+			else if(options.t_opt){
 				if(options.c_opt)
 					qsort(Entries, entries_number, sizeof(CombinedStat_t), Cmp_Ctime);		//sorting by change time
 					
 				else if(options.u_opt)
 					qsort(Entries, entries_number, sizeof(CombinedStat_t), Cmp_Atime);		//sorting by Access time
 					
+				else 
+					qsort(Entries, entries_number, sizeof(CombinedStat_t), Cmp_Mtime);		//sorting by Modification time	
+			}		
 			else
 				qsort(Entries, entries_number, sizeof(CombinedStat_t), cmpstringp);		//sorting by name.
 

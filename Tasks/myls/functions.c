@@ -17,7 +17,6 @@ void NormalPrint(MaxSizes_t* max_sizes , CombinedStat_t* Entries , Options_t* op
 	int i = 0;
 	
 	ioctl( 0, TIOCGWINSZ, &window );
-	   
 	
 	while( strcmp(Entries->name , "DONE") != 0 ){
 		mode = Entries->Files.st_mode;
@@ -27,63 +26,19 @@ void NormalPrint(MaxSizes_t* max_sizes , CombinedStat_t* Entries , Options_t* op
 			continue;
 		}
 		
-		/*-----------File Type---------*/
-		if(S_ISREG(mode)){
-		 	strcpy(colored_name , Entries->name);		//default.
-		 	
-		 	//check if file is Executable so make it green.
-			if( ((mode & S_IXUSR) == S_IXUSR) && ((mode & S_IXOTH) == S_IXOTH) && ((mode & S_IXGRP) == S_IXGRP) ){
-				strcpy(colored_name , "\033[1;32m");		//green color
-				strcat(colored_name , Entries->name);
-				strcat(colored_name , "\033[0m");
-			}
-		 }	
-		else if(S_ISDIR(mode)){
-			strcpy(colored_name , "\033[1;34m");		//blue color	
-			strcat(colored_name , Entries->name);
-			strcat(colored_name , "\033[0m");		
-		}
-		else if(S_ISCHR(mode)){
-			strcpy(colored_name , "\033[1;40;33m");		//orange color
-			strcat(colored_name , Entries->name);
-			strcat(colored_name , "\033[0m");
-			
-		}	
-		else if(S_ISBLK(mode)){
-			strcpy(colored_name , "\033[1;40;33m");		//orange color
-			strcat(colored_name , Entries->name);
-			strcat(colored_name , "\033[0m");
-				
-		}
-		else if(S_ISFIFO(mode)){
-			strcpy(colored_name , "\033[1;40;33m");		//orange color
-			strcat(colored_name , Entries->name);
-			strcat(colored_name , "\033[0m");
-			
-		}
-		else if(S_ISLNK(mode)){
-			strcpy(colored_name , "\033[1;36m");		//cyan color
-			strcat(colored_name , Entries->name);
-			strcat(colored_name , "\033[0m");
-		}	
-		else if(S_ISSOCK(mode)){
-			strcpy(colored_name , "\033[1;35m");		//purple color
-			strcat(colored_name , Entries->name);
-			strcat(colored_name , "\033[0m");
-		}
-		else{
-			strcpy(colored_name , Entries->name);		//default.
-		}
+		ColoredFileName(mode , colored_name , Entries->name);
 		
 		/* check on inode_opt flag to print inode number */
 		if(options->inode_opt){
-			row = window.ws_col / (max_sizes->file_inode + max_sizes->file_name + (window.ws_col / max_sizes->file_name)) ;
+			col = window.ws_col / (max_sizes->file_inode + max_sizes->file_name) ;
+			col =  (window.ws_col - col) / (max_sizes->file_inode + max_sizes->file_name);
 			
 			if(i == 0){
 				printf("%*li %s ", max_sizes->file_inode , Entries->Files.st_ino  ,  colored_name);
 				i++;
+		
 			}
-			else if(i == row){
+			else if(i == col){
 				printf("\n");
 				i=0;
 			}
@@ -95,13 +50,14 @@ void NormalPrint(MaxSizes_t* max_sizes , CombinedStat_t* Entries , Options_t* op
 
 		}
 		else{
-			row = window.ws_col / (max_sizes->file_name + (window.ws_col / max_sizes->file_name)) ;
+			col = window.ws_col / max_sizes->file_name ;
+			col =  (window.ws_col - col) / max_sizes->file_name;
 			
 			if(i == 0){
 				printf("%s " ,  colored_name);
 				i++;
 			}
-			else if(i == row){
+			else if(i == col){
 				printf("\n");
 				i=0;
 			}
@@ -124,7 +80,7 @@ void PrintLongFormat(char *dir_path , MaxSizes_t* max_sizes , CombinedStat_t* En
 	int mode;
 	struct group* grp;
 	struct passwd* pwd;
-	long change_time;
+	long time;
 	char c_time[128];
 	char inode[16];
 	char colored_name[268];
@@ -144,19 +100,19 @@ void PrintLongFormat(char *dir_path , MaxSizes_t* max_sizes , CombinedStat_t* En
 		grp = getgrgid(Entries->Files.st_gid);
 		pwd = getpwuid(Entries->Files.st_uid);
 		if(options->c_opt){
-			change_time = Entries->Files.st_ctime;
+			time = Entries->Files.st_ctime;
 		}
 		else if(options->u_opt){
-			change_time = Entries->Files.st_atime;
+			time = Entries->Files.st_atime;
 		}
 		else if(options->t_opt){
-			change_time = Entries->Files.st_mtime;
+			time = Entries->Files.st_mtime;
 		}
 		else{
-			change_time = Entries->Files.st_ctime;
+			time = Entries->Files.st_ctime;
 		}
 		
-		strcpy(c_time , ctime(&change_time));
+		strcpy(c_time , ctime(&time));
 		strcpy(c_time , strtok(c_time ,"\n")) ;
 		
 		strcpy(inode ,"");
@@ -324,53 +280,7 @@ void PrintOneLine(MaxSizes_t* max_sizes , CombinedStat_t* Entries , Options_t* o
 			continue;
 		}
 		
-		/*-----------File Type---------*/
-		if(S_ISREG(mode)){
-		 	strcpy(colored_name , Entries->name);		//default.
-		 	
-		 	//check if file is Executable so make it green.
-			if( ((mode & S_IXUSR) == S_IXUSR) && ((mode & S_IXOTH) == S_IXOTH) && ((mode & S_IXGRP) == S_IXGRP) ){
-				strcpy(colored_name , "\033[1;32m");		//green color
-				strcat(colored_name , Entries->name);
-				strcat(colored_name , "\033[0m");
-			}
-		 }	
-		else if(S_ISDIR(mode)){
-			strcpy(colored_name , "\033[1;34m");		//blue color	
-			strcat(colored_name , Entries->name);
-			strcat(colored_name , "\033[0m");		
-		}
-		else if(S_ISCHR(mode)){
-			strcpy(colored_name , "\033[1;40;33m");		//orange color
-			strcat(colored_name , Entries->name);
-			strcat(colored_name , "\033[0m");
-			
-		}	
-		else if(S_ISBLK(mode)){
-			strcpy(colored_name , "\033[1;40;33m");		//orange color
-			strcat(colored_name , Entries->name);
-			strcat(colored_name , "\033[0m");
-				
-		}
-		else if(S_ISFIFO(mode)){
-			strcpy(colored_name , "\033[1;40;33m");		//orange color
-			strcat(colored_name , Entries->name);
-			strcat(colored_name , "\033[0m");
-			
-		}
-		else if(S_ISLNK(mode)){
-			strcpy(colored_name , "\033[1;36m");		//cyan color
-			strcat(colored_name , Entries->name);
-			strcat(colored_name , "\033[0m");
-		}	
-		else if(S_ISSOCK(mode)){
-			strcpy(colored_name , "\033[1;35m");		//purple color
-			strcat(colored_name , Entries->name);
-			strcat(colored_name , "\033[0m");
-		}
-		else{
-			strcpy(colored_name , Entries->name);		//default.
-		}
+		ColoredFileName(mode , colored_name , Entries->name);
 		
 		/* check on inode_opt flag to print inode number */
 		if(options->inode_opt){
@@ -492,6 +402,60 @@ int GetEntries(char *dirName,CombinedStat_t Entries[]){
 			perror("close");	
 	}	
 	return i;	//return no. of entries 
+}
+
+/*=========================================================================================================================================================*/
+
+void ColoredFileName(int mode , char *colored_name , char *file_name){
+
+	/*-----------File Type---------*/
+		if(S_ISREG(mode)){
+		 	strcpy(colored_name , file_name);		//default.
+		 	
+		 	//check if file is Executable so make it green.
+			if( ((mode & S_IXUSR) == S_IXUSR) && ((mode & S_IXOTH) == S_IXOTH) && ((mode & S_IXGRP) == S_IXGRP) ){
+				strcpy(colored_name , "\033[1;32m");		//green color
+				strcat(colored_name , file_name);
+				strcat(colored_name , "\033[0m");
+			}
+		 }	
+		else if(S_ISDIR(mode)){
+			strcpy(colored_name , "\033[1;34m");		//blue color	
+			strcat(colored_name , file_name);
+			strcat(colored_name , "\033[0m");		
+		}
+		else if(S_ISCHR(mode)){
+			strcpy(colored_name , "\033[1;40;33m");		//orange color
+			strcat(colored_name , file_name);
+			strcat(colored_name , "\033[0m");
+			
+		}	
+		else if(S_ISBLK(mode)){
+			strcpy(colored_name , "\033[1;40;33m");		//orange color
+			strcat(colored_name , file_name);
+			strcat(colored_name , "\033[0m");
+				
+		}
+		else if(S_ISFIFO(mode)){
+			strcpy(colored_name , "\033[1;40;33m");		//orange color
+			strcat(colored_name , file_name);
+			strcat(colored_name , "\033[0m");
+			
+		}
+		else if(S_ISLNK(mode)){
+			strcpy(colored_name , "\033[1;36m");		//cyan color
+			strcat(colored_name , file_name);
+			strcat(colored_name , "\033[0m");
+		}	
+		else if(S_ISSOCK(mode)){
+			strcpy(colored_name , "\033[1;35m");		//purple color
+			strcat(colored_name , file_name);
+			strcat(colored_name , "\033[0m");
+		}
+		else{
+			strcpy(colored_name , file_name);		//default.
+		}
+
 }
 
 /*=========================================================================================================================================================*/
