@@ -2,10 +2,7 @@
 #include "main.h"
 
 static int CountDigits(long long num);
-
-/*=========================================================================================================================================================*/
-
-
+static void ColoredFileName(int mode , char *colored_name , char *file_name);
 
 /*=========================================================================================================================================================*/
 
@@ -218,6 +215,8 @@ void PrintLongFormat(char *dir_path , MaxSizes_t* max_sizes , CombinedStat_t* En
 		);
 		
 		if(S_ISLNK(mode)){
+			struct stat sym_stat;
+			
 			/* Add one to the link size, so that we can determine whether
 	   		   the symlink_buffer returned by readlink() was truncated. */
 	  		 bufsiz = Entries->Files.st_size + 1;
@@ -244,6 +243,8 @@ void PrintLongFormat(char *dir_path , MaxSizes_t* max_sizes , CombinedStat_t* En
 			
 			sprintf(path , "%s%s%s" , dir_path , "/" , Entries->name);
 			nbytes = readlink(path , symlink_buf, bufsiz);
+			lstat(symlink_buf , &sym_stat);
+			ColoredFileName(mode , colored_name , symlink_buf);
 			free(path);
 			
 			if (nbytes == -1) {
@@ -251,7 +252,7 @@ void PrintLongFormat(char *dir_path , MaxSizes_t* max_sizes , CombinedStat_t* En
 				exit(EXIT_FAILURE);
 			}
 			else{
-				printf("\033[1;37m→\033[0m %s\n" , symlink_buf);
+				printf("\033[1;37m→\033[0m %s\n" , colored_name);
 				
 				free(symlink_buf);
 			}
@@ -406,7 +407,7 @@ int GetEntries(char *dirName,CombinedStat_t Entries[]){
 
 /*=========================================================================================================================================================*/
 
-void ColoredFileName(int mode , char *colored_name , char *file_name){
+static void ColoredFileName(int mode , char *colored_name , char *file_name){
 
 	/*-----------File Type---------*/
 		if(S_ISREG(mode)){
