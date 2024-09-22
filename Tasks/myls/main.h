@@ -1,6 +1,7 @@
 #ifndef MAIN_H	
 #define MAIN_H
 
+/*-----------------Includes---------------------*/
 #define _XOPEN_SOURCE 700
 #include <ctype.h>
 #include <string.h>
@@ -19,12 +20,16 @@
 #include <time.h>
 #include <sys/ioctl.h>
 
-
+/*-----------------Macros---------------------*/
 #define PATH_MAX         256
+
+/*-----------------Variables Declaration---------------------*/
 
 extern char *optarg;
 extern int optind, opterr, optopt;
 extern int errno;
+
+/*-----------------User defined types---------------------*/
 
 typedef struct{
 	int file_size;
@@ -52,6 +57,7 @@ typedef struct{
 
 }CombinedStat_t;
 
+/*-----------------Functions Declaration---------------------*/
 
 int GetEntries(char *dirName,CombinedStat_t Entries[]);
 MaxSizes_t* GetLstat(char *dir_path , CombinedStat_t Entries[]);

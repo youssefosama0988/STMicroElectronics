@@ -1,10 +1,13 @@
 
 #include "main.h"
 
-static int CountDigits(long long num);
-static void ColoredFileName(int mode , char *colored_name , char *file_name);
+
+static int CountDigits(long long num);	/* return no. of digits in num */
+static void ColoredFileName(int mode , char *colored_name , char *file_name);    /* concatenate the suitable color to the file name according to its type */
 
 /*=========================================================================================================================================================*/
+
+
 
 void NormalPrint(MaxSizes_t* max_sizes , CombinedStat_t* Entries , Options_t* options){
 	struct winsize window;
@@ -15,7 +18,7 @@ void NormalPrint(MaxSizes_t* max_sizes , CombinedStat_t* Entries , Options_t* op
 	
 	ioctl( 0, TIOCGWINSZ, &window );
 	
-	while( strcmp(Entries->name , "DONE") != 0 ){
+	while( strcmp(Entries->name , "O2OF HNA") != 0 ){
 		mode = Entries->Files.st_mode;
 		
 		if( (!options->all_opt) && ( strcmp(Entries->name , ".") == 0 || strcmp(Entries->name , "..") == 0 ) ){						
@@ -78,7 +81,7 @@ void PrintLongFormat(char *dir_path , MaxSizes_t* max_sizes , CombinedStat_t* En
 	struct group* grp;
 	struct passwd* pwd;
 	long time;
-	char c_time[128];
+	char time_str[128];
 	char inode[16];
 	char colored_name[268];
 	char *symlink_buf;			//to save the file name in case of symlink.
@@ -90,12 +93,13 @@ void PrintLongFormat(char *dir_path , MaxSizes_t* max_sizes , CombinedStat_t* En
 		exit(-1);
 	}
 	
-	while(strcmp(Entries->name , "DONE") != 0){
+	while(strcmp(Entries->name , "O2OF HNA") != 0){
 		
 		strcpy(str, "----------");
 		mode = Entries->Files.st_mode;
 		grp = getgrgid(Entries->Files.st_gid);
 		pwd = getpwuid(Entries->Files.st_uid);
+		
 		if(options->c_opt){
 			time = Entries->Files.st_ctime;
 		}
@@ -109,12 +113,10 @@ void PrintLongFormat(char *dir_path , MaxSizes_t* max_sizes , CombinedStat_t* En
 			time = Entries->Files.st_ctime;
 		}
 		
-		strcpy(c_time , ctime(&time));
-		strcpy(c_time , strtok(c_time ,"\n")) ;
+		strcpy(time_str , ctime(&time));
+		strcpy(time_str , strtok(time_str ,"\n")) ;
 		
 		strcpy(inode ,"");
-		
-		
 		
 		//File Type
 		if(S_ISREG(mode)){
@@ -209,11 +211,12 @@ void PrintLongFormat(char *dir_path , MaxSizes_t* max_sizes , CombinedStat_t* En
 			grp->gr_name ,	
 			max_sizes->file_size ,
 			Entries->Files.st_size ,
-			(int)strlen(c_time) ,
-			c_time ,
+			(int)strlen(time_str) ,
+			time_str ,
 			colored_name 
 		);
 		
+		/* check if the entry is symLink */
 		if(S_ISLNK(mode)){
 			struct stat sym_stat;
 			
@@ -243,8 +246,8 @@ void PrintLongFormat(char *dir_path , MaxSizes_t* max_sizes , CombinedStat_t* En
 			
 			sprintf(path , "%s%s%s" , dir_path , "/" , Entries->name);
 			nbytes = readlink(path , symlink_buf, bufsiz);
-			lstat(symlink_buf , &sym_stat);
-			ColoredFileName(mode , colored_name , symlink_buf);
+			stat(symlink_buf , &sym_stat);
+			ColoredFileName(sym_stat.st_mode , colored_name , symlink_buf);
 			free(path);
 			
 			if (nbytes == -1) {
@@ -273,7 +276,7 @@ void PrintOneLine(MaxSizes_t* max_sizes , CombinedStat_t* Entries , Options_t* o
 	char colored_name[268];
 	int mode;
 	
-	while( strcmp(Entries->name , "DONE") != 0 ){
+	while( strcmp(Entries->name , "O2OF HNA") != 0 ){
 		mode = Entries->Files.st_mode;
 		
 		if( (!options->all_opt) && ( strcmp(Entries->name , ".") == 0 || strcmp(Entries->name , "..") == 0 ) ){						
@@ -322,7 +325,7 @@ MaxSizes_t* GetLstat(char *dir_path , CombinedStat_t Entries[]){
 	}
 	
 		
-	while(strcmp(Entries[i].name , "DONE") != 0){
+	while(strcmp(Entries[i].name , "O2OF HNA") != 0){
 		/*get the path of the file */
 		path = (char *)malloc(strlen(dir_path) + 1 + strlen(Entries[i].name) + 1);     // one more for "/" -->  "dir + / + Name + Null termination"
 		
@@ -393,7 +396,7 @@ int GetEntries(char *dirName,CombinedStat_t Entries[]){
 			strcpy(Entries[i].name , entry->d_name);
 			i++;
 		}
-		strcpy(Entries[i].name , "DONE");
+		strcpy(Entries[i].name , "O2OF HNA");
 		
 		if(errno != 0){
 			perror("Read Dir");

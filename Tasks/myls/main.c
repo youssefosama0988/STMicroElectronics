@@ -38,11 +38,11 @@ int main(int argc , char** argv){
 		}
 	}
 	
-	/* check if the first non-option argument is NULL --> print CWD "."*/
+	/* check if the first non-option argument is NULL --> print CWD "." */
 	if(argv[optind] == NULL ){
 		printf("Listing Current working Directory\n");
 		
-		/* get the entry of the directory and save it in the array and return no. of entries */
+		/* get the entries of the directory and save it in the array and return no. of entries */
 		entries_number = GetEntries(".",Entries);
 		
 		if(entries_number){
@@ -90,7 +90,7 @@ int main(int argc , char** argv){
 	
 		printf("\nListing '%s' Directory\n", argv[optind]);
 		
-		/* get the entry of the directory and save it in the array and return no. of entries */
+		/* get the entries of the directory and save it in the array and return no. of entries */
 		entries_number = GetEntries( argv[optind] , Entries);
 		
 		if(entries_number){
