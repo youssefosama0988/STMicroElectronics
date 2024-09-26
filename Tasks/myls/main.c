@@ -16,6 +16,7 @@ int main(int argc , char** argv){
 		.u_opt 	     	= false ,
 		.inode_opt    	= false ,
 		.f_opt 	    	= false ,
+		.d_opt 	    	= false ,
 		.oneLine_opt	= false ,
 	};
 		
@@ -30,6 +31,7 @@ int main(int argc , char** argv){
 			case 'c': options.c_opt 	  = true;       break;
 			case 'i': options.inode_opt       = true;       break;
 			case 'f': options.f_opt 	  = true;       break;
+			case 'd': options.d_opt 	  = true;       break;
 			case '1': options.oneLine_opt 	  = true;       break;
 			
 			case ':': printf("Missing Argument for %c option\n" , optopt);		break;
@@ -44,8 +46,15 @@ int main(int argc , char** argv){
 		
 		/* get the entries of the directory and save it in the array and return no. of entries */
 		entries_number = GetEntries(".",Entries);
-		
+		/* get lstat structures and return struct contains the maximum width of each field */
+		max_sizes = GetLstat("." , Entries );
+
 		if(entries_number){
+			if(options.d_opt){
+				printf(".\n");
+				exit(0);
+			}
+			
 			if(options.f_opt){
 				//don't sort except with -c option sort by ctime
 				if(options.c_opt)
@@ -63,9 +72,6 @@ int main(int argc , char** argv){
 			else
 				qsort(Entries, entries_number, sizeof(CombinedStat_t), cmpstringp);		//sorting by name.
 
-			
-			/* get lstat structures and return struct contains the maximum width of each field */
-			max_sizes = GetLstat("." , Entries );
 			
 			if(options.oneLine_opt){
 				PrintOneLine(max_sizes , Entries , &options);
@@ -87,8 +93,13 @@ int main(int argc , char** argv){
 	}
 	
 	while(argv[optind] != NULL){
-	
+		if(options.d_opt){
+			printf("%s\n", argv[optind]);
+			optind++;
+			continue;
+		}
 		printf("\nListing '%s' Directory\n", argv[optind]);
+		
 		
 		/* get the entries of the directory and save it in the array and return no. of entries */
 		entries_number = GetEntries( argv[optind] , Entries);

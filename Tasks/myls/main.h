@@ -49,6 +49,7 @@ typedef struct{
 	bool inode_opt    	;
 	bool f_opt 	    	;
 	bool oneLine_opt	;
+	bool d_opt 	    	;
 }Options_t;
 
 typedef struct{

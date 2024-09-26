@@ -466,7 +466,7 @@ static void ColoredFileName(int mode , char *colored_name , char *file_name){
 
 int Cmp_Ctime(const void *p1, const void *p2){
 
-	return -( ((CombinedStat_t *)p1)->Files.st_mtime - ((CombinedStat_t *)p2)->Files.st_mtime );
+	return -( ((CombinedStat_t *)p1)->Files.st_ctime - ((CombinedStat_t *)p2)->Files.st_ctime );
 }
 
 /*=========================================================================================================================================================*/
