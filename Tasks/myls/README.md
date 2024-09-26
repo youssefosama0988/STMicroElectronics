@@ -36,6 +36,8 @@ After compiling, you can run myls directly from the terminal.
 ```
 ./myls [options] [directory]
 ```
+## Video
+[MyLs_Video](https://drive.google.com/file/d/11eUbfhzu0qega8Yjk4W56wJlMKIJK8d9/view?usp=sharing)
 ## Output:
 ### Dynamic Listing
 ![dynamic_listing](https://github.com/user-attachments/assets/16d1941c-341d-4524-93c2-95843cd13585)
@@ -55,8 +57,9 @@ After compiling, you can run myls directly from the terminal.
 <br>
 ### One entry per line
 ![print_OneLine](https://github.com/user-attachments/assets/c744d706-ed18-44dc-a6e9-0fedc55f7b5f)
-
-
+<br>
+### Unsuported Option
+![UnsupportedOption](https://github.com/user-attachments/assets/8df9ba97-e710-4f67-8932-7cf4e8c7ad11)
 
 
 
