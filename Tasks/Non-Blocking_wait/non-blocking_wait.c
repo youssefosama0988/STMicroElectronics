@@ -10,8 +10,7 @@
 /**********************************Functions Declarations*****************************************/
 void SIGCHILD_handler(int signo, siginfo_t *info, void *ucontext);
 int non_blocking_wait(int *status);
-
-
+void undo_waiting(void);
 
 /*========Main=============*/
 int main(){
@@ -30,12 +29,13 @@ int main(){
 		non_blocking_wait(NULL);
 		printf("Parent : waiting for childrens\n");
 		while(1);
+		//undo_waiting();			/*to undo waiting for childrens, make SIGCHLD handler is default*/
+		//while(1);
 	}
-	else {
+	else{
 	
 		perror("fork ");
 	}
-
 
 	return 0;
 }
@@ -76,4 +76,26 @@ int non_blocking_wait(int *status){
 	}
 		
 }
+
+
+void undo_waiting(void){
+
+	struct sigaction sa;
+	int sa_ret;
+	
+	sa.sa_handler = SIG_DFL; 
+	
+	sa_ret = sigaction(SIGCHLD , &sa , NULL);
+	
+	if(-1 == sa_ret){
+		perror("sigaction ");	
+	}
+
+}
+
+
+
+
+
+
 
