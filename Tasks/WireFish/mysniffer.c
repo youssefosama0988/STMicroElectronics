@@ -3,23 +3,13 @@
 
 void packet_handler(u_char *user_data, const struct pcap_pkthdr *pkthdr,const u_char *packet) {
     
-    
-    pcap_dumper_t *pcap_dumper = (pcap_dumper_t *)user_data;
-    if(pcap_dumper != NULL){
-    	pcap_dump( (unsigned char *)pcap_dumper, pkthdr, packet);
-    }
-    
-    
-    
-   // struct ip *ip_header = (struct ip *)(packet + 14);  // Skip Ethernet header
-
     // Process IP layer
     IP_Packet_t *ip_layer = Construct_IP_packet(packet);
     ip_layer->digest_ip(ip_layer); 				 // Polymorphism
     struct ip *ip_header = ip_layer->ip_hdr;
 
     // Process Transport layer
-    if (ip_header->ip_p == IPPROTO_TCP) {
+    if (ip_header->ip_p == IPPROTO_TCP){
         TCP_t *tcp_layer = Construct_TCP_packet(packet);
         tcp_layer->ip_packet->Digest_Protocol((IP_Packet_t *)tcp_layer);  // Polymorphism
         tcp_layer->ip_packet->print_applicationPort(ntohs(tcp_layer->tcp_hdr->th_dport));     		
@@ -38,6 +28,14 @@ void packet_handler(u_char *user_data, const struct pcap_pkthdr *pkthdr,const u_
 
 	deconstruct_IP_packet(ip_layer);
 	printf("==============================================================\n");
+	
+	  
+    pcap_dumper_t *pcap_dumper = (pcap_dumper_t *)user_data;
+    if(pcap_dumper != NULL){
+    	pcap_dump( (unsigned char *)pcap_dumper, pkthdr, packet);
+    	
+    }
+	
 }
 
 int main(int argc, char *argv[]) {
@@ -77,10 +75,14 @@ int main(int argc, char *argv[]) {
     			printf("PCAPDUMPER!!\n");
     			return -1;
     		}
+    		pcap_loop(handle, 10, packet_handler, (unsigned char *)pcap_dumper);
+    		pcap_dump_close(pcap_dumper);
+    		pcap_close(handle);
+    		return 0;
     	}
     }
 
-    pcap_loop(handle, 0, packet_handler, NULL);
+    pcap_loop(handle, 10, packet_handler, NULL);
     		
     pcap_close(handle);
     return 0;
