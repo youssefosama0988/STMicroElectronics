@@ -52,7 +52,7 @@ typedef struct{
 void Digest_IP(IP_Packet_t *layer);
 void digest_tcp(IP_Packet_t *layer);
 void digest_udp(IP_Packet_t *layer);
-void digest_ICMP(IP_Packet_t *layer);
+void digest_icmp(IP_Packet_t *layer);
 
 IP_Packet_t *Construct_IP_packet(const u_char *packet);
 void deconstruct_IP_packet(IP_Packet_t *ip_packet);
@@ -63,6 +63,8 @@ void deconstruct_TCP_packet(TCP_t *tcp);
 UDP_t *Construct_UDP_packet(const u_char *packet);
 void deconstruct_UDP_packet(UDP_t *udp);
 
+ICMP_t *Construct_ICMP_packet(const u_char *packet);
+void deconstruct_ICMP_packet(ICMP_t *tcp);
 
 
 

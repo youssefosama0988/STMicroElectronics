@@ -38,6 +38,41 @@ void digest_udp(IP_Packet_t *layer) {
 }
 
 
+void digest_icmp(IP_Packet_t *layer){
+	
+	struct icmphdr *icmp_header = ((ICMP_t *)layer)->icmp_hdr;
+
+    // Print basic ICMP information
+    printf("ICMP Packet :\n");
+    printf("	|-ICMP Type: %d\n", icmp_header->type);
+    printf("	|-ICMP Code: %d\n", icmp_header->code);
+    printf("	|-ICMP Checksum: 0x%04x\n", ntohs(icmp_header->checksum));
+
+    // Handle specific types of ICMP messages
+    switch (icmp_header->type){
+        case ICMP_ECHO:
+            printf("	Type: Echo Request\n");
+            break;
+        case ICMP_ECHOREPLY:
+            printf("	Type: Echo Reply \n");
+            break;
+        case ICMP_DEST_UNREACH:
+             printf("	(Destination Unreachable)\n"); break;
+            break;
+        case ICMP_TIME_EXCEEDED:
+            printf("	Type: Time Exceeded\n");
+            break;
+        case ICMP_PARAMPROB:
+            printf("	Type: Parameter Problem\n");
+            break;
+        default:
+            printf("	Type: Unknown ICMP Type\n");
+            break;
+    }
+
+}
+
+
 
 /***************************************************************************************************************************/
 IP_Packet_t *Construct_IP_packet(const u_char *packet){
@@ -102,5 +137,29 @@ UDP_t *Construct_UDP_packet(const u_char *packet){
 void deconstruct_UDP_packet(UDP_t *udp){
 	deconstruct_IP_packet(udp->ip_packet);
 	free(udp);
+
+}
+
+
+/***************************************************************************************************************************/
+
+ICMP_t *Construct_ICMP_packet(const u_char *packet){
+
+	ICMP_t *icmp_packet = (ICMP_t *)malloc(sizeof(ICMP_t));
+	if(!icmp_packet){
+		perror("malloc\n");
+		exit(-1);
+	}
+	icmp_packet->ip_packet = Construct_IP_packet(packet);  
+	icmp_packet->icmp_hdr = (struct icmphdr *)(packet + 14 + (icmp_packet->ip_packet->ip_hdr->ip_hl * 4));
+	icmp_packet->ip_packet->Digest_Protocol = digest_icmp;			//polymorphism
+	
+	return icmp_packet;
+}
+
+
+void deconstruct_ICMP_packet(ICMP_t *icmp){
+	deconstruct_IP_packet(icmp->ip_packet);
+	free(icmp);
 
 }

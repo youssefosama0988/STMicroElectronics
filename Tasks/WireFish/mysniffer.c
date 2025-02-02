@@ -10,7 +10,7 @@ void packet_handler(u_char *user_data, const struct pcap_pkthdr *pkthdr,const u_
     ip_layer->digest_ip(ip_layer); 				 // Polymorphism
     struct ip *ip_header = ip_layer->ip_hdr;
 
-    // Process TCP layer
+    // Process Transport layer
     if (ip_header->ip_p == IPPROTO_TCP) {
         TCP_t *tcp_layer = Construct_TCP_packet(packet);
         tcp_layer->ip_packet->Digest_Protocol((IP_Packet_t *)tcp_layer);  // Polymorphism
@@ -20,6 +20,11 @@ void packet_handler(u_char *user_data, const struct pcap_pkthdr *pkthdr,const u_
         UDP_t *udp_layer = Construct_UDP_packet(packet);
         udp_layer->ip_packet->Digest_Protocol((IP_Packet_t *)udp_layer);  // Polymorphism
         deconstruct_UDP_packet(udp_layer);  // Destructor
+    }
+    else if (ip_header->ip_p == IPPROTO_ICMP) {
+        ICMP_t *icmp_layer = Construct_ICMP_packet(packet);
+        icmp_layer->ip_packet->Digest_Protocol((IP_Packet_t *)icmp_layer);  // Polymorphism
+        deconstruct_ICMP_packet(icmp_layer);  // Destructor
     }
 
 	deconstruct_IP_packet(ip_layer);
@@ -44,7 +49,7 @@ int main(int argc, char *argv[]) {
         return 1;
     }
     
-    if (pcap_compile(handle, &fp, "udp", 0, PCAP_NETMASK_UNKNOWN) == -1) {
+    if (pcap_compile(handle, &fp, argv[2], 0, PCAP_NETMASK_UNKNOWN) == -1) {
         fprintf(stderr, "Error compiling filter: %s\n", pcap_geterr(handle));
         return 1;
     }
