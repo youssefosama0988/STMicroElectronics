@@ -16,8 +16,14 @@ void packet_handler(u_char *user_data, const struct pcap_pkthdr *pkthdr,const u_
         tcp_layer->ip_packet->Digest_Protocol((IP_Packet_t *)tcp_layer);  // Polymorphism
         deconstruct_TCP_packet(tcp_layer);  // Destructor
     }
+    else if (ip_header->ip_p == IPPROTO_UDP) {
+        UDP_t *udp_layer = Construct_UDP_packet(packet);
+        udp_layer->ip_packet->Digest_Protocol((IP_Packet_t *)udp_layer);  // Polymorphism
+        deconstruct_UDP_packet(udp_layer);  // Destructor
+    }
 
 	deconstruct_IP_packet(ip_layer);
+	printf("==============================================================\n");
 }
 
 int main(int argc, char *argv[]) {
@@ -38,7 +44,7 @@ int main(int argc, char *argv[]) {
         return 1;
     }
     
-    if (pcap_compile(handle, &fp, "tcp", 0, PCAP_NETMASK_UNKNOWN) == -1) {
+    if (pcap_compile(handle, &fp, "udp", 0, PCAP_NETMASK_UNKNOWN) == -1) {
         fprintf(stderr, "Error compiling filter: %s\n", pcap_geterr(handle));
         return 1;
     }

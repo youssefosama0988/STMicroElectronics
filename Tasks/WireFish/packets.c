@@ -2,9 +2,9 @@
 #include "packets.h"
 
 
-void Digest_IP(IP_Packet_t *layer){
+void Digest_IP(IP_Packet_t *ip_packet){
     
-    struct ip *ip_header = layer->ip_hdr;
+    struct ip *ip_header = ip_packet->ip_hdr;
 
     printf("IP Header:\n");
     printf("   |-Version        : %d\n", ip_header->ip_v);
@@ -19,7 +19,7 @@ void Digest_IP(IP_Packet_t *layer){
 // Function to print TCP header fields
 void digest_tcp(IP_Packet_t *layer){
 
-    struct sniff_tcp *tcp_header = ((TCP_t *)layer)->tcp_hdr;
+    struct tcphdr *tcp_header = ((TCP_t *)layer)->tcp_hdr;
     printf("TCP Header:\n");
     printf("   |-Source Port     : %d\n", ntohs(tcp_header->th_sport));
     printf("   |-Destination Port: %d\n", ntohs(tcp_header->th_dport));
@@ -69,8 +69,8 @@ TCP_t *Construct_TCP_packet(const u_char *packet){
 		perror("malloc\n");
 		exit(-1);
 	}
-	tcp_packet->ip_packet = (IP_Packet_t *)packet;  
-	tcp_packet->tcp_hdr = (struct sniff_tcp *)(packet + 14 + (tcp_packet->ip_packet->ip_hdr->ip_hl * 4));
+	tcp_packet->ip_packet = Construct_IP_packet(packet);  
+	tcp_packet->tcp_hdr = (struct tcphdr *)(packet + 14 + (tcp_packet->ip_packet->ip_hdr->ip_hl * 4));
 	tcp_packet->ip_packet->Digest_Protocol = digest_tcp;			//polymorphism
 	
 	return tcp_packet;
@@ -78,11 +78,12 @@ TCP_t *Construct_TCP_packet(const u_char *packet){
 
 
 void deconstruct_TCP_packet(TCP_t *tcp){
-
+	deconstruct_IP_packet(tcp->ip_packet);
 	free(tcp);
 
 }
 /***************************************************************************************************************************/
+
 UDP_t *Construct_UDP_packet(const u_char *packet){
 
 	UDP_t *udp_packet = (UDP_t *)malloc(sizeof(UDP_t));
@@ -90,16 +91,16 @@ UDP_t *Construct_UDP_packet(const u_char *packet){
 		perror("malloc\n");
 		exit(-1);
 	}
-	udp_packet->ip_packet = (IP_Packet_t *)packet;
-	udp_packet->udp_hdr = (struct udphdr *)(packet + 14 + (udp_packet->ip_packet->ip_hdr->ip_hl * 4));    
-	udp_packet->ip_packet->Digest_Protocol = digest_udp;                       //polymorphism
+	udp_packet->ip_packet = Construct_IP_packet(packet);  
+	udp_packet->udp_hdr = (struct udphdr *)(packet + 14 + (udp_packet->ip_packet->ip_hdr->ip_hl * 4));
+	udp_packet->ip_packet->Digest_Protocol = digest_udp;			//polymorphism
 	
 	return udp_packet;
-
 }
 
-void deconstruct_UDP_packet(TCP_t *udp){
 
+void deconstruct_UDP_packet(UDP_t *udp){
+	deconstruct_IP_packet(udp->ip_packet);
 	free(udp);
 
 }
