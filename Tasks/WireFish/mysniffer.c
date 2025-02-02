@@ -3,6 +3,14 @@
 
 void packet_handler(u_char *user_data, const struct pcap_pkthdr *pkthdr,const u_char *packet) {
     
+    
+    pcap_dumper_t *pcap_dumper = (pcap_dumper_t *)user_data;
+    if(pcap_dumper != NULL){
+    	pcap_dump( (unsigned char *)pcap_dumper, pkthdr, packet);
+    }
+    
+    
+    
    // struct ip *ip_header = (struct ip *)(packet + 14);  // Skip Ethernet header
 
     // Process IP layer
@@ -14,6 +22,7 @@ void packet_handler(u_char *user_data, const struct pcap_pkthdr *pkthdr,const u_
     if (ip_header->ip_p == IPPROTO_TCP) {
         TCP_t *tcp_layer = Construct_TCP_packet(packet);
         tcp_layer->ip_packet->Digest_Protocol((IP_Packet_t *)tcp_layer);  // Polymorphism
+        tcp_layer->ip_packet->print_applicationPort(ntohs(tcp_layer->tcp_hdr->th_dport));     		
         deconstruct_TCP_packet(tcp_layer);  // Destructor
     }
     else if (ip_header->ip_p == IPPROTO_UDP) {
@@ -32,11 +41,10 @@ void packet_handler(u_char *user_data, const struct pcap_pkthdr *pkthdr,const u_
 }
 
 int main(int argc, char *argv[]) {
-    if (argc < 2) {
-        printf("Usage: %s <interface>\n", argv[0]);
+    if (argc < 3){
+        printf("Usage: %s <interface> <filter>\n", argv[0]);
         return 1;
     }
-
 
     struct bpf_program fp;
 
@@ -59,9 +67,21 @@ int main(int argc, char *argv[]) {
         fprintf(stderr, "Error setting filter: %s\n", pcap_geterr(handle));
         return 1;
     }
+    
+    if(argv[3] != NULL){
+    	
+    	if(strcmp("-f" , argv[3]) == 0){
+    		char *pcap_file = argv[4];
+    		pcap_dumper_t *pcap_dumper = pcap_dump_open(handle, pcap_file);
+    		if (pcap_dumper == NULL){
+    			printf("PCAPDUMPER!!\n");
+    			return -1;
+    		}
+    	}
+    }
 
     pcap_loop(handle, 0, packet_handler, NULL);
-
+    		
     pcap_close(handle);
     return 0;
 }

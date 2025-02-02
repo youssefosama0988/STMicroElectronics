@@ -71,7 +71,27 @@ void digest_icmp(IP_Packet_t *layer){
     }
 
 }
+void print_applicationPort(int port){
+  
+        if (port == 80) {
+            // HTTP (Port 80)
+            printf("		HTTP Application Layer Data:\n");
+        }
+        // Check for HTTPS (Port 443)
+        else if (port == 443) {
+            // HTTPS (Port 443) - Encrypted, cannot display actual data
+            printf("		HTTPS Traffic (Encrypted, not printable)\n");
+        }
+        // Check for SSH (Port 22)
+        else if (port == 22) {
+            // SSH (Port 22) - Encrypted, cannot display actual data
+            printf("		SSH Traffic (Encrypted, not printable)\n");
+        }
+        else {
+            printf("	No supported application layer protocol found for port %d.\n", port);
+        }
 
+}
 
 
 /***************************************************************************************************************************/
@@ -86,6 +106,7 @@ IP_Packet_t *Construct_IP_packet(const u_char *packet){
 	ip_packet->eth_hdr = (struct sniff_ethernet *) packet;
 	ip_packet->ip_hdr = (struct ip *)(packet + 14);
 	ip_packet->digest_ip = Digest_IP;					//polymorphism
+	ip_packet->print_applicationPort = print_applicationPort;
 	
 	return ip_packet;
 }
