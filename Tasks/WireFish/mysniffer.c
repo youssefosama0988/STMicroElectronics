@@ -4,55 +4,60 @@ void
 packet_handler(u_char * user_data, const struct pcap_pkthdr *pkthdr,
 	       const u_char * packet)
 {
-	struct ip *ip_header, *ip_parent;
-	// Process IP layer
-	IP_Packet_t *ip_layer = Construct_IP_packet(packet);
-	ip_header = ip_layer->ip_hdr;
-	ip_layer->digest_ip(ip_layer);	//print ip header
-
-	// Process Transport layer
+	struct ip *ip_header;
+	const void* app_ptr;
+	IP_Packet_t *pckt;
+	ip_header = (struct ip *)(packet + 14);
+	
+/*****************************************Construct the packet**********************************************/	
 	if (ip_header->ip_p == IPPROTO_TCP) {
-		TCP_t *tcp_layer = Construct_TCP_packet(packet);
-		tcp_layer->ip_packet->Digest_Protocol((IP_Packet_t *) tcp_layer);	// Polymorphism
-
-		if (ntohs(tcp_layer->tcp_hdr->th_sport) == 80	//check if the packet is HTTP
-		    || ntohs(tcp_layer->tcp_hdr->th_dport) == 80) {
-			HTTP_t *http = Construct_HTTP_packet(packet);
-			http->digest_http(packet);
-			deconstruct_HTTP_packet(http);
-		} else if (ntohs(tcp_layer->tcp_hdr->th_sport) == FTP_PORT	//check if the packet is FTP
-			   || ntohs(tcp_layer->tcp_hdr->th_dport) == FTP_PORT) {
-			FTP_t *ftp = Construct_FTP_packet(packet);
-			ftp->print_FTP_data(packet);
-			deconstruct_FTP_packet(ftp);
+		struct tcphdr *tcp_hdr = (struct tcphdr *) (packet + 14 + ip_header->ip_hl * 4);
+		
+		if (ntohs(tcp_hdr->th_sport) == 80	//check if the packet is HTTP
+		    || ntohs(tcp_hdr->th_dport) == 80) {
+			app_ptr = (const void *)Construct_HTTP_packet(packet);
+			pckt = ((HTTP_t *)app_ptr)->tcp_packet->ip_packet;
+			
+		} else if (ntohs(tcp_hdr->th_sport) == FTP_PORT	//check if the packet is FTP
+			   || ntohs(tcp_hdr->th_dport) == FTP_PORT) {
+			app_ptr = (const void *)Construct_FTP_packet(packet);
+			pckt = ((FTP_t *)app_ptr)->tcp_packet->ip_packet;
+			
 		} else {
 
 		}
 
-		deconstruct_TCP_packet(tcp_layer);	// Destructor
 	} else if (ip_header->ip_p == IPPROTO_UDP) {
-		UDP_t *udp_layer = Construct_UDP_packet(packet);
-		udp_layer->ip_packet->Digest_Protocol((IP_Packet_t *) udp_layer);	// Polymorphism
+		
+		struct udphdr *udp_hdr = (struct udphdr *) (packet + 14 + ip_header->ip_hl * 4);
+		
 
-		if (ntohs(udp_layer->udp_hdr->uh_sport) == DNS_PORT	//check if the packet is DNS
-		    || ntohs(udp_layer->udp_hdr->uh_dport) == DNS_PORT) {
+		if (ntohs(udp_hdr->uh_sport) == DNS_PORT	//check if the packet is DNS
+		    || ntohs(udp_hdr->uh_dport) == DNS_PORT) {
 
-			DNS_t *dns = Construct_DNS_packet(packet);
-			dns->digest_dns(packet);
-			deconstruct_DNS_packet(dns);
+			app_ptr = (const void *)Construct_DNS_packet(packet);
+			pckt = ((DNS_t *)app_ptr)->udp_packet->ip_packet;
+			
 		}
 
-		deconstruct_UDP_packet(udp_layer);	// Destructor
 
 	} else if (ip_header->ip_p == IPPROTO_ICMP) {
-		ICMP_t *icmp_layer = Construct_ICMP_packet(packet);
-		icmp_layer->ip_packet->Digest_Protocol((IP_Packet_t *) icmp_layer);	// Polymorphism
-		deconstruct_ICMP_packet(icmp_layer);	// Destructor
+		app_ptr = (const void *)Construct_ICMP_packet(packet);
+		pckt = ((ICMP_t *)app_ptr)->ip_packet;
 	}
 
-	deconstruct_IP_packet(ip_layer);
+/**************************************Process the packet***************************************/
+	if(NULL != pckt){
+		pckt->digest_ip(pckt);
+		pckt->Digest_Protocol(pckt);
+		pckt->digest_applayer(packet);
+	}
 	printf
 	    ("==============================================================\n");
+	
+/****************************************Destruct the packet********************************************/
+			//here	
+			free((void *)app_ptr);            //simulate DESTRUCTOR
 
 	pcap_dumper_t *pcap_dumper = (pcap_dumper_t *) user_data;
 	if (pcap_dumper != NULL) {

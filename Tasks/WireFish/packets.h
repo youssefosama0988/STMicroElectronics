@@ -41,8 +41,9 @@ typedef struct IP_Packet
 
   struct sniff_ethernet *eth_hdr;
   struct ip *ip_hdr;
-  void (*digest_ip) (struct IP_Packet * ip_packet);	//fixed implementation to all packets to print ip-header
+  void (*digest_ip) (struct IP_Packet * ip_packet);		//fixed implementation to all packets to print ip-header
   void (*Digest_Protocol) (struct IP_Packet * ip_packet);	//implemented by each packet to show each protocol-header
+  void (*digest_applayer)(const u_char * packet);
 } IP_Packet_t;
 
 /*********************Trasnport Layer***********************/
@@ -72,19 +73,19 @@ typedef struct
 typedef struct
 {
   TCP_t *tcp_packet;		//inheritance
-  void (*digest_http) (const char *packet);
+  
 } HTTP_t;
 
 typedef struct
 {
   TCP_t *tcp_packet;		//inheritance
-  void (*print_FTP_data) (const u_char * packet);
+  
 } FTP_t;
 
 typedef struct
 {
   UDP_t *udp_packet;		//inheritance
-  void (*digest_dns) (const unsigned char *packet);
+  
 } DNS_t;
 
 

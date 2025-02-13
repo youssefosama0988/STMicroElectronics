@@ -1,11 +1,11 @@
 
 #include "packets.h"
-
+void digest_applayer(const u_char * packet);
 static void print_domain_name(const uint8_t * packet, int offset);	//private
 
 static int get_payload_start(const u_char * packet);			//private
 
-void digest_http(const char *packet)
+void digest_http(const u_char * packet)
 {
 
 	int offset = get_payload_start(packet);
@@ -45,7 +45,7 @@ void print_FTP_data(const u_char * packet)
 }
 
 // Function to parse DNS packet operates over udp only
-void digest_dns(const unsigned char *packet)
+void digest_dns(const u_char * packet)
 {
 	struct dnshdr *dns_header;
 	int dns_payload_offset;
@@ -186,6 +186,7 @@ IP_Packet_t *Construct_IP_packet(const u_char * packet)
 	ip_packet->eth_hdr = (struct sniff_ethernet *)packet;
 	ip_packet->ip_hdr = (struct ip *)(packet + 14);
 	ip_packet->digest_ip = Digest_IP;
+	ip_packet->digest_applayer = digest_applayer;
 
 	return ip_packet;
 }
@@ -207,7 +208,7 @@ HTTP_t *Construct_HTTP_packet(const u_char * packet)
 		exit(-1);
 	}
 	http_packet->tcp_packet = Construct_TCP_packet(packet);
-	http_packet->digest_http = digest_http;
+	http_packet->tcp_packet->ip_packet->digest_applayer = digest_http;
 
 	return http_packet;
 
@@ -219,6 +220,9 @@ void deconstruct_HTTP_packet(HTTP_t * http)
 	free(http);
 }
 
+
+
+
 FTP_t *Construct_FTP_packet(const u_char * packet)
 {
 
@@ -228,8 +232,7 @@ FTP_t *Construct_FTP_packet(const u_char * packet)
 		exit(-1);
 	}
 	ftp_packet->tcp_packet = Construct_TCP_packet(packet);
-	ftp_packet->print_FTP_data = print_FTP_data;
-
+	ftp_packet->tcp_packet->ip_packet->digest_applayer = print_FTP_data;
 	return ftp_packet;
 
 }
@@ -240,6 +243,10 @@ void deconstruct_FTP_packet(FTP_t * ftp)
 	free(ftp);
 }
 
+
+
+
+
 DNS_t *Construct_DNS_packet(const u_char * packet)
 {
 
@@ -249,8 +256,7 @@ DNS_t *Construct_DNS_packet(const u_char * packet)
 		exit(-1);
 	}
 	dns_packet->udp_packet = Construct_UDP_packet(packet);
-	dns_packet->digest_dns = digest_dns;
-
+	dns_packet->udp_packet->ip_packet->digest_applayer = digest_dns;	
 	return dns_packet;
 
 }
@@ -340,6 +346,15 @@ void deconstruct_ICMP_packet(ICMP_t * icmp)
 }
 
 /***************************************************************************************************************************/
+
+
+void digest_applayer(const u_char * packet){
+
+
+}
+
+
+
 
 /** This functions are considered private as it is static in the file and has no pointer in the struct */
 
