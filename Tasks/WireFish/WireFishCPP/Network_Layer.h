@@ -1,7 +1,6 @@
-#ifndef IP_PACKET_H
-#define IP_PACKET_H
-#include "Application_Layer.h"
-#include "Transport_Layer.h"
+#ifndef NETWORK_LAYER_H
+#define NETWORK_LAYER_H
+
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -21,24 +20,31 @@
 #define UDP_HEADER  	8
 #define DNS_HEADER   	12
 
-class IP_Packet
-{
-    public:
-        IP_Packet();
-        IP_Packet(const char *pckt);
-        virtual ~IP_Packet();
-        void digest_ip();
-        virtual digest_protocol() = 0; //abstract function
-
-    protected:
-        struct ip* get_iphdr() const;
-        void set_iphdr(struct ip* iphdr);
-        const char *get_packet() const;
-        void set_packet(const char *pckt);
-
+class IP_Packet {				//abstract class
+   
     private:
         struct ip *ip_hdr;
         const char *packet;
+            
+    public:
+        IP_Packet();
+        IP_Packet(const char *pckt);
+        
+        virtual ~IP_Packet();
+        
+        void digest_ip();			//print ip header for any packet
+        virtual void digest_protocol() = 0; 	//pure virtual 'abstract function'
+        virtual void digest_applayer() = 0;	
+        
+
+    protected:
+        struct ip* get_iphdr();
+        void set_iphdr(struct ip* iphdr);
+        const char *get_packet();
+        void set_packet(const char *pckt);
+        int get_iPhdr_len();
+
+
 
 };
 
