@@ -9,7 +9,7 @@ int main()
 	Item_t *inventory;
 
 	// Create the inventory file
-	fd = open(INVENTORY, O_RDWR | O_CREAT , 0777);
+	fd = open(INVENTORY, O_RDWR | O_CREAT , 0644);
 	if (fd == -1) {
 		perror("Opening the Shop failed :( ");
 		return -1;

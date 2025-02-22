@@ -1,5 +1,5 @@
-1 Shirt 25.99 100
-2 Pants 45.50 50
-3 Jacket 75.00 30
-4 Hoodie 55.99 60
+501 Shirt 125.99 100
+502 Wide_Leg 499.99 50
+503 Jacket 1750.00 30
+504 Hoodie 299.99 60
 

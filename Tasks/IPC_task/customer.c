@@ -49,7 +49,6 @@ int main()
 void order_handler(Item_t * inventory, int fd)
 {
 	int quantity;
-	void *ret;
 	char item_name[30] = { };
 	int len;
 
