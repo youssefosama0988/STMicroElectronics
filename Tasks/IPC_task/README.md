@@ -71,5 +71,5 @@ gcc inventory.c sys.c -o inventory_manager
 
 ---
 ## Video 
-
+[Run the program](https://drive.google.com/file/d/1eomR57R25Om9eOp9IJu5Y1FKwOG-kn8k/view?usp=sharing)
 
