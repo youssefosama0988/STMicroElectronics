@@ -14,7 +14,7 @@
 
 
 typedef struct{
-    int id;
+    int bar_code;
     char name[30];
     float price;
     int count;

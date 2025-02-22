@@ -43,8 +43,8 @@ int main()
 
 	/************************** Show the stock *********************/
 		for (int i = 0; i < NO_OF_ITEMS; i++) {
-			printf("ID: %d, Name: %s, Price: %.2f, Count: %d\n",
-			       inventory[i].id, inventory[i].name,
+			printf("Bar Code: %d, Name: %s, Price: %.2f, Count: %d\n",
+			       inventory[i].bar_code, inventory[i].name,
 			       inventory[i].price, inventory[i].count);
 		}
 		printf("===============================================\n");
@@ -78,7 +78,7 @@ void initialize_inventory(Item_t * inventory, char *file_name)
 
 	for (int i = 0; i < NO_OF_ITEMS; i++) {
 		fscanf(initial_file, "%d %s %f %d",
-		       &inventory[i].id,
+		       &inventory[i].bar_code,
 		       inventory[i].name,
 		       &inventory[i].price, &inventory[i].count);
 	}
