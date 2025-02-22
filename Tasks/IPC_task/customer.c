@@ -9,12 +9,11 @@ int main()
 	Item_t *inventory;
 
 	//Open the inventory file
-	fd = open(INVENTORY, O_RDWR);			
+	fd = open(INVENTORY, O_RDWR);
 	if (fd == -1) {
 		perror("Error opening inventory file");
 		exit(1);
 	}
-	
 	//Map the file into memory
 	inventory =
 	    mmap(NULL, SHOP_SIZE, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
@@ -42,8 +41,8 @@ int main()
 
 	return 0;
 }
-/***************************************************************** END OF MAIN **************************************************************************/
 
+/***************************************************************** END OF MAIN **************************************************************************/
 
 // Function to place an order
 void order_handler(Item_t * inventory, int fd)
@@ -63,7 +62,7 @@ void order_handler(Item_t * inventory, int fd)
 	if (len > 0 && item_name[len - 1] == '\n') {
 		item_name[len - 1] = '\0';
 	}
-	
+
 	printf("Enter quantity: ");
 	scanf("%d", &quantity);
 
@@ -84,8 +83,8 @@ void order_handler(Item_t * inventory, int fd)
 				     inventory[i].name);
 			}
 			break;
-			
-		} else if (i == NO_OF_ITEMS - 1)			//last item 
+
+		} else if (i == NO_OF_ITEMS - 1)	//last item 
 			printf("Invalid ITEM : %s\n", item_name);
 	}
 

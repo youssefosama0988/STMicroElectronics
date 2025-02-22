@@ -9,7 +9,7 @@ int main()
 	Item_t *inventory;
 
 	// Create the inventory file
-	fd = open(INVENTORY, O_RDWR | O_CREAT , 0644);
+	fd = open(INVENTORY, O_RDWR | O_CREAT, 0644);
 	if (fd == -1) {
 		perror("Opening the Shop failed :( ");
 		return -1;
@@ -19,7 +19,6 @@ int main()
 		perror("ftruncate ");
 		return -1;
 	}
-
 	//Map the file into memory
 	inventory =
 	    mmap(NULL, SHOP_SIZE, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
@@ -34,8 +33,8 @@ int main()
 	write_lock(fd);
 	initialize_inventory(inventory, INIT_STOCK);
 	unlock(fd);
-	
-	/*periodic printing of inventory*/
+
+	/*periodic printing of inventory */
 	while (1) {
 
 	/***********************lock the file***************************/
@@ -43,9 +42,10 @@ int main()
 
 	/************************** Show the stock *********************/
 		for (int i = 0; i < NO_OF_ITEMS; i++) {
-			printf("Bar Code: %d, Name: %s, Price: %.2f, Count: %d\n",
-			       inventory[i].bar_code, inventory[i].name,
-			       inventory[i].price, inventory[i].count);
+			printf
+			    ("Bar Code: %d, Name: %s, Price: %.2f, Count: %d\n",
+			     inventory[i].bar_code, inventory[i].name,
+			     inventory[i].price, inventory[i].count);
 		}
 		printf("===============================================\n");
 
@@ -65,8 +65,6 @@ int main()
 
 	return 0;
 }
-
-
 
 void initialize_inventory(Item_t * inventory, char *file_name)
 {

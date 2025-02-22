@@ -1,19 +1,19 @@
 #include "system.h"
 
-void update_inventory(Item_t *inventory, int fd);
+void update_inventory(Item_t * inventory, int fd);
 
-int main() {
+int main()
+{
 
 	int fd;
 	Item_t *inventory;
 
 	//Open the inventory file
-	fd = open(INVENTORY, O_RDWR);			
+	fd = open(INVENTORY, O_RDWR);
 	if (fd == -1) {
 		perror("Error opening inventory file");
 		exit(1);
 	}
-	
 	//Map the file into memory
 	inventory =
 	    mmap(NULL, SHOP_SIZE, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
@@ -23,28 +23,26 @@ int main() {
 		close(fd);
 		exit(1);
 	}
+	//inventory updates
+	while (1) {
 
-    //inventory updates
-    while (1) {
-    
-        update_inventory(inventory, fd);
-    }
+		update_inventory(inventory, fd);
+	}
 
-    //unmap the memory before exiting
-    if (munmap(inventory, SHOP_SIZE) == -1) {
-        perror("Error unmapping file");
-        exit(1);
-    }
-    
-    close(fd);
+	//unmap the memory before exiting
+	if (munmap(inventory, SHOP_SIZE) == -1) {
+		perror("Error unmapping file");
+		exit(1);
+	}
 
-    return 0;
+	close(fd);
+
+	return 0;
 }
 
-
-
-void update_inventory(Item_t *inventory, int fd) {
-    	int quantity , price;
+void update_inventory(Item_t * inventory, int fd)
+{
+	int quantity, price;
 	char item_name[30] = { };
 	int len;
 
@@ -59,35 +57,33 @@ void update_inventory(Item_t *inventory, int fd) {
 	if (len > 0 && item_name[len - 1] == '\n') {
 		item_name[len - 1] = '\0';
 	}
-	
 	// search for the item in the inventory
 	for (int i = 0; i < NO_OF_ITEMS; i++) {
-		
+
 		if (strcmp(inventory[i].name, item_name) == 0) {	//item exist
 			printf("Enter quantity: '0 for unchange'");
 			scanf("%d", &quantity);
 			printf("Enter Price: '-1 for unchange'");
 			scanf("%d", &price);
-			
-			//lock the file
+
+			//lock the file , lock the file once in the entire loop. in one iteration.
 			write_lock(fd);
-			
+
 			if (quantity > -1) {
 				inventory[i].count += quantity;
-			} 
-			if(price > -1){
+			}
+			if (price > -1) {
 				inventory[i].price = price;
 			}
-			
 			//unlock the file
 			unlock(fd);
-			
+
 			break;
-			
-		} else if (i == NO_OF_ITEMS - 1)			//last item 
+
+		} else if (i == NO_OF_ITEMS - 1)	//last item 
 			printf("Invalid ITEM : %s\n", item_name);
 	}
-	
+
 	close(fd);
-	
+
 }
